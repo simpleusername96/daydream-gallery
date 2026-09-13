@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b0d">
+  <meta name="description" content="에셋으로 구성된 자율형 절차적 비주얼 월드를 조용히 재생하고 전환합니다.">
+  <title>Ambient Worlds</title>
+  <link rel="stylesheet" href="app/styles.css">
+</head>
+<body>
+  <main id="stage" aria-label="현재 비주얼 월드">
+    <div id="referenceBackdrop" aria-hidden="true"></div>
+    <div id="worldSlot"></div>
+    <canvas id="frozenScene" aria-hidden="true"></canvas>
+    <div id="transitionVeil" aria-hidden="true"></div>
+    <div id="worldStatus" role="status" aria-live="polite"></div>
+    <div id="loadingNotice" hidden><span class="loadingPulse" aria-hidden="true"></span><span id="loadingText" role="status" aria-live="polite"></span><button id="retryWorld" type="button" hidden>다시 시도</button></div>
+  </main>
+
+  <nav id="worldSwitcher" class="chrome" aria-label="프로젝트 탐색">
+    <select id="worldSelect" aria-label="프로젝트 선택"></select>
+  </nav>
+
+  <div id="playerControls" class="chrome" aria-label="재생 조작">
+    <button type="button" id="playPause" class="iconButton" title="정지" aria-label="정지" aria-pressed="false">
+      <svg class="pauseIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+      <svg class="playIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l9 6-9 6z"/></svg>
+    </button>
+    <button type="button" id="randomScene" class="sceneButton" title="새로운 장면 보기 · R" aria-label="새 장면 보기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3c4 0 5 10 9 10h4M17 14l3 3-3 3M4 17h3c1.7 0 2.9-1.8 4-4M15 7h5M17 4l3 3-3 3"/></svg>
+    </button>
+    <button type="button" id="sound" class="iconButton" title="소리 켜기" aria-label="소리 켜기" aria-pressed="false">
+      <svg class="soundOnIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10h4l4-4v12l-4-4H5zM16 9c1 1 1 5 0 6M19 7c2 3 2 7 0 10"/></svg>
+      <svg class="soundOffIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10h4l4-4v12l-4-4H5zM17 10l4 4M21 10l-4 4"/></svg>
+    </button>
+    <button type="button" id="focusView" class="iconButton" title="화면만 보기" aria-label="컨트롤 숨기기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5M4 4l16 16"/></svg>
+    </button>
+  </div>
+
+  <script type="module" src="app/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Journey adapter</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}iframe{position:fixed;inset:0;border:0;width:100%;height:100%}#error{display:none;color:#dce5df;background:#14221d;padding:40px;font:14px system-ui}.failed #error{display:block}.failed iframe{display:none}</style></head>
+<body><iframe id="world" src="./source/OPEN_THIS.html?player=1" title="Journey"></iframe><div id="error">Journey를 준비하지 못했습니다.</div>
+<script type="module">
+import { connectWorld } from "../../app/adapter.js";
+const frame = document.querySelector("#world");
+connectWorld({
+ world:"journey",frame,timeoutMs:30000,
+ resolve(){const api=frame.contentWindow?.__wander;return api?{ready:api.ready,player:api.player}:null;},
+ prepare(doc){if(!doc?.querySelector("#landscape")||doc.querySelector("#ambientSourceUI"))return;
+ const style=doc.createElement("style");style.id="ambientSourceUI";
+ style.textContent="header,.left-hud,.themes,.actions,#settings,#hint,#toast,.touch-controls{display:none!important}";
+ doc.head.append(style);doc.body.classList.add("hide-ui");}
+});
+</script></body></html>
