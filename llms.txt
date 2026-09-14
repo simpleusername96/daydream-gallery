@@ -1,0 +1,18 @@
+# Ambient Worlds
+
+> A free browser player for endlessly changing, peaceful procedural landscapes.
+
+Ambient Worlds is made through human art direction and selection with GPT-based AI coding assistance. The runtime itself is deterministic browser code, not an AI generation service.
+
+## Experience
+
+- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Watch Journey and Stillwater, switch scenes, pause playback, or listen with optional sound.
+
+## Available worlds
+
+- Journey: An isometric drive through changing coastal, desert, forest, and dusk landscapes.
+- Stillwater: A quiet pond where water, light, plants, leaves, and fish move together.
+
+## Source
+
+- [Public source code](https://github.com/simpleusername96/ambient-worlds-site): The exact reviewed files published to the live site, with third-party notices and licenses.

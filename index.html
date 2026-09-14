@@ -4,9 +4,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080b0d">
-  <meta name="description" content="에셋으로 구성된 자율형 절차적 비주얼 월드를 조용히 재생하고 전환합니다.">
-  <title>Ambient Worlds</title>
+  <meta name="description" content="명상과 집중을 위한 무료 앰비언트 비주얼 플레이어. 사람의 아트 디렉션과 GPT 기반 AI 코딩 협업으로 만든 절차적 풍경 Journey와 Stillwater를 감상하세요.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://ambient-worlds.pages.dev/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="Ambient Worlds">
+  <meta property="og:title" content="Ambient Worlds — 무한히 재생되는 평화로운 풍경">
+  <meta property="og:description" content="명상과 집중을 위한 무료 앰비언트 비주얼 플레이어. Journey와 Stillwater의 아름다운 절차적 풍경을 감상하세요.">
+  <meta property="og:url" content="https://ambient-worlds.pages.dev/">
+  <meta property="og:image" content="https://ambient-worlds.pages.dev/screenshots/stillwater.png">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="900">
+  <meta property="og:image:alt" content="노을빛 하늘 아래 연꽃과 물고기가 움직이는 Stillwater 연못 풍경">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ambient Worlds — 무한히 재생되는 평화로운 풍경">
+  <meta name="twitter:description" content="명상과 집중을 위한 무료 앰비언트 비주얼 플레이어">
+  <meta name="twitter:image" content="https://ambient-worlds.pages.dev/screenshots/stillwater.png">
+  <title>Ambient Worlds — 무한히 재생되는 평화로운 풍경</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="app/styles.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Ambient Worlds",
+      "url": "https://ambient-worlds.pages.dev/",
+      "description": "명상과 집중을 위한 무료 앰비언트 비주얼 플레이어. 아름다운 절차적 풍경 Journey와 Stillwater를 무한히 감상할 수 있습니다.",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "Any",
+      "isAccessibleForFree": true,
+      "image": "https://ambient-worlds.pages.dev/screenshots/stillwater.png",
+      "sameAs": "https://github.com/simpleusername96/ambient-worlds-site",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
 </head>
 <body>
   <main id="stage" aria-label="현재 비주얼 월드">
@@ -21,6 +57,23 @@
   <nav id="worldSwitcher" class="chrome" aria-label="프로젝트 탐색">
     <select id="worldSelect" aria-label="프로젝트 선택"></select>
   </nav>
+
+  <aside id="aboutPanel" class="chrome" aria-label="Ambient Worlds 정보">
+    <details>
+      <summary title="프로젝트 정보" aria-label="프로젝트 정보 보기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+      </summary>
+      <section class="aboutCard">
+        <img src="screenshots/stillwater.png" width="1600" height="900" loading="lazy" alt="노을빛 하늘 아래 연꽃과 물고기가 움직이는 Stillwater 연못 풍경">
+        <div class="aboutCopy">
+          <h1>Ambient Worlds</h1>
+          <p>아름답고 평화로운 풍경을 계속 감상할 수 있는 무료 앰비언트 비주얼 플레이어입니다. 명상, 집중, 휴식 또는 조용한 배경이 필요할 때 Journey와 Stillwater를 재생해 보세요.</p>
+          <p>사람의 아트 디렉션과 선택을 바탕으로 GPT 기반 AI 코딩 협업을 통해 만들었습니다. 장면은 브라우저에서 절차적으로 움직이며 끝없이 이어집니다.</p>
+          <a class="sourceLink" href="https://github.com/simpleusername96/ambient-worlds-site" target="_blank" rel="noopener noreferrer">GitHub에서 공개 코드 보기</a>
+        </div>
+      </section>
+    </details>
+  </aside>
 
   <div id="playerControls" class="chrome" aria-label="재생 조작">
     <button type="button" id="playPause" class="iconButton" title="정지" aria-label="정지" aria-pressed="false">
