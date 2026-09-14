@@ -200,8 +200,7 @@ body.chromeHidden #playerControls { transform: translate(-50%, 8px); }
 @media (max-width: 620px) {
   #worldSwitcher { width: auto; }
   #aboutPanel { right: 12px; }
-  .aboutCard { right: 12px; }
-  .aboutCard { max-height: calc(100vh - 82px); }
+  .aboutCard { right: 12px; max-height: calc(100vh - 82px); }
   #playerControls { bottom: max(16px, calc(env(safe-area-inset-bottom) + 8px)); }
   #worldStatus { bottom: max(82px, calc(env(safe-area-inset-bottom) + 70px)); }
 }
