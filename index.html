@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080b0d">
-  <meta name="description" content="명상과 집중을 위한 무료 앰비언트 비주얼 플레이어. 사람의 아트 디렉션과 GPT 기반 AI 코딩 협업으로 만든 절차적 풍경 Journey와 Stillwater를 감상하세요.">
+  <meta name="description" content="평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다. 명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://ambient-worlds.pages.dev/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="Ambient Worlds">
-  <meta property="og:title" content="Ambient Worlds — 무한히 재생되는 평화로운 풍경">
-  <meta property="og:description" content="명상과 집중을 위한 무료 앰비언트 비주얼 플레이어. Journey와 Stillwater의 아름다운 절차적 풍경을 감상하세요.">
+  <meta property="og:title" content="Ambient Worlds — 평화로운 풍경 플레이어">
+  <meta property="og:description" content="평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다. 명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.">
   <meta property="og:url" content="https://ambient-worlds.pages.dev/">
   <meta property="og:image" content="https://ambient-worlds.pages.dev/screenshots/stillwater.png">
   <meta property="og:image:width" content="1600">
   <meta property="og:image:height" content="900">
   <meta property="og:image:alt" content="노을빛 하늘 아래 연꽃과 물고기가 움직이는 Stillwater 연못 풍경">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Ambient Worlds — 무한히 재생되는 평화로운 풍경">
-  <meta name="twitter:description" content="명상과 집중을 위한 무료 앰비언트 비주얼 플레이어">
+  <meta name="twitter:title" content="Ambient Worlds — 평화로운 풍경 플레이어">
+  <meta name="twitter:description" content="평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다.">
   <meta name="twitter:image" content="https://ambient-worlds.pages.dev/screenshots/stillwater.png">
-  <title>Ambient Worlds — 무한히 재생되는 평화로운 풍경</title>
+  <title>Ambient Worlds — 평화로운 풍경 플레이어</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="app/styles.css">
   <script type="application/ld+json">
@@ -30,7 +30,7 @@
       "@type": "WebApplication",
       "name": "Ambient Worlds",
       "url": "https://ambient-worlds.pages.dev/",
-      "description": "명상과 집중을 위한 무료 앰비언트 비주얼 플레이어. 아름다운 절차적 풍경 Journey와 Stillwater를 무한히 감상할 수 있습니다.",
+      "description": "평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다. 명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.",
       "applicationCategory": "EntertainmentApplication",
       "operatingSystem": "Any",
       "isAccessibleForFree": true,
@@ -66,10 +66,15 @@
       <section class="aboutCard">
         <img src="screenshots/stillwater.png" width="1600" height="900" loading="lazy" alt="노을빛 하늘 아래 연꽃과 물고기가 움직이는 Stillwater 연못 풍경">
         <div class="aboutCopy">
+          <div class="languageSwitch" role="group" aria-label="설명 언어">
+            <button type="button" data-language="ko" aria-pressed="true">한국어</button>
+            <button type="button" data-language="en" aria-pressed="false">English</button>
+          </div>
           <h1>Ambient Worlds</h1>
-          <p>아름답고 평화로운 풍경을 계속 감상할 수 있는 무료 앰비언트 비주얼 플레이어입니다. 명상, 집중, 휴식 또는 조용한 배경이 필요할 때 Journey와 Stillwater를 재생해 보세요.</p>
-          <p>사람의 아트 디렉션과 선택을 바탕으로 GPT 기반 AI 코딩 협업을 통해 만들었습니다. 장면은 브라우저에서 절차적으로 움직이며 끝없이 이어집니다.</p>
-          <a class="sourceLink" href="https://github.com/simpleusername96/ambient-worlds-site" target="_blank" rel="noopener noreferrer">GitHub에서 공개 코드 보기</a>
+          <p data-copy="description">평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다.</p>
+          <p data-copy="use">명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.</p>
+          <p data-copy="credit">사람의 아트 디렉션과 선택을 바탕으로 GPT와 협업을 통해 만들었습니다.</p>
+          <a class="sourceLink" data-copy="source" href="https://github.com/simpleusername96/ambient-worlds-site" target="_blank" rel="noopener noreferrer">GitHub에서 공개 코드 보기</a>
         </div>
       </section>
     </details>
@@ -92,6 +97,7 @@
     </button>
   </div>
 
+  <script type="module" src="app/about.js"></script>
   <script type="module" src="app/main.js"></script>
 </body>
 </html>

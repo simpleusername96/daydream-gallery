@@ -1,10 +1,12 @@
 # Ambient Worlds
 
-변화하는 풍경을 조용히 감상하는 플레이어입니다.
+평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다.
+
+명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.
 
 **[라이브 사이트 보기 · Open live site](https://ambient-worlds.pages.dev/)**
 
-이 앱은 GPT-5.6과 GPT-6를 활용해 구현했습니다.
+사람의 아트 디렉션과 선택을 바탕으로 GPT와 협업을 통해 만들었습니다.
 
 - **Journey** — 해안, 사막, 황혼 테마를 오가며, 아이소메트릭 시점에서 달리는 자동차를 중심으로 풍경이 이어지는 장면
 - **Stillwater** — 물, 빛, 식물과 물고기가 움직이는 고요한 연못 풍경
@@ -17,9 +19,11 @@
 
 ---
 
-A player for quietly watching changing landscapes.
+A visual player for peaceful landscapes.
 
-This app was built using GPT-5.6 and GPT-6.
+Play it for meditation, focus, rest, or a quiet background.
+
+Made in collaboration with GPT, guided by human art direction and selection.
 
 - **Journey** — an isometric drive through shifting coastal, desert, and dusk landscapes, centered on a moving car
 - **Stillwater** — a quiet pond landscape where water, light, plants, and fish move together

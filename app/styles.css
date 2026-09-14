@@ -154,6 +154,20 @@ body.chromeHidden #aboutPanel { transform: translateY(-8px); }
 }
 .aboutCard img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 17px 17px 0 0; }
 .aboutCopy { padding: 20px; }
+.languageSwitch { display: flex; justify-content: flex-end; gap: 4px; margin: -4px -4px 12px 0; }
+.languageSwitch button {
+  min-height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(237, 242, 238, .58);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.languageSwitch button:hover { color: var(--ink); }
+.languageSwitch button[aria-pressed="true"] { background: rgba(255, 255, 255, .1); color: var(--ink); }
 .aboutCopy h1 { margin: 0 0 12px; font-size: 22px; line-height: 1.2; letter-spacing: -.02em; }
 .aboutCopy p { margin: 0 0 12px; color: rgba(237, 242, 238, .78); font-size: 13px; line-height: 1.65; word-break: keep-all; }
 .sourceLink { display: inline-flex; min-height: 40px; align-items: center; margin-top: 4px; color: var(--ink); font-size: 13px; text-underline-offset: 3px; }
