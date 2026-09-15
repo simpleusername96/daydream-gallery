@@ -1,7 +1,8 @@
 ---
 type: plan
-status: active
+status: archived
 created_at: 2026-09-15T13:42:10+09:00
+archived_at: 2026-09-15T13:44:10+09:00
 scope: repository agent-document structure
 related:
   - AGENTS.md
@@ -50,8 +51,9 @@ Create the current `agent-governor` owners for this existing static publication 
 - [x] **3.2** Run `git diff --check`, path/link/dependency checks, and changed-scope verification.
   - Accept: all checks pass and public/runtime files remain byte-identical.
   - Evidence: diff checks pass; required paths resolve; removed-dependency references are zero; only governance/docs paths changed.
-- [ ] **3.3** Commit/push the structure, then archive this completed plan and push the final checkpoint.
+- [x] **3.3** Commit/push the structure, then archive this completed plan and push the final checkpoint.
   - Accept: local `HEAD` matches `origin/main`, active count is zero, and the worktree is clean.
+  - Evidence: plan commit `64a6a94` and structure commit `59ff0cb` were pushed; this final checkpoint archives the completed plan.
 
 ## Rework and Completion Controls
 
