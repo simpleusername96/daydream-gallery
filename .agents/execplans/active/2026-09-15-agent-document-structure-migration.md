@@ -35,16 +35,21 @@ Create the current `agent-governor` owners for this existing static publication 
 
 ## Tasks
 
-- [ ] **1.1** Create `docs/PROJECT.md` with purpose, scope, accepted experience, implementation owners, safety/licensing constraints, publication owners, and focused validation.
+- [x] **1.1** Create `docs/PROJECT.md` with purpose, scope, accepted experience, implementation owners, safety/licensing constraints, publication owners, and focused validation.
   - Accept: a new session can route work without reading source files broadly.
-- [ ] **1.2** Create root `AGENTS.md`, `.agents/AGENTS.md`, and `docs/AGENTS.md` with current routing, language, work-state, retention, and authority rules.
+  - Evidence: the contract routes the inspected shell, registry, adapter, playback, audio, world, metadata, and license owners.
+- [x] **1.2** Create root `AGENTS.md`, `.agents/AGENTS.md`, and `docs/AGENTS.md` with current routing, language, work-state, retention, and authority rules.
   - Accept: project truth, work state, and documentation have one owner each.
-- [ ] **2.1** Verify that all named runtime/publication/license owners exist and no product file is modified.
+  - Evidence: the three scoped entry points directly route current owners and define active/archive lifecycle without a compatibility policy.
+- [x] **2.1** Verify that all named runtime/publication/license owners exist and no product file is modified.
   - Accept: the migration is governance-only.
-- [ ] **3.1** Apply `$occam-ablation` with the Implementation target.
+  - Evidence: all 21 required paths exist and the working diff contains no public or runtime path.
+- [x] **3.1** Apply `$occam-ablation` with the Implementation target.
   - Accept: no redundant project map, duplicate policy, or compatibility pointer is added.
-- [ ] **3.2** Run `git diff --check`, path/link/dependency checks, and changed-scope verification.
+  - Evidence: no safe subtraction remains; root routing, work state, docs scope, and compact project truth are separate responsibilities.
+- [x] **3.2** Run `git diff --check`, path/link/dependency checks, and changed-scope verification.
   - Accept: all checks pass and public/runtime files remain byte-identical.
+  - Evidence: diff checks pass; required paths resolve; removed-dependency references are zero; only governance/docs paths changed.
 - [ ] **3.3** Commit/push the structure, then archive this completed plan and push the final checkpoint.
   - Accept: local `HEAD` matches `origin/main`, active count is zero, and the worktree is clean.
 
