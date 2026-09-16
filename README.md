@@ -1,5 +1,13 @@
 # Ambient Worlds
 
+| Journey | Stillwater |
+| --- | --- |
+| [![Journey landscape](screenshots/journey.png)](https://ambient-worlds.pages.dev/) | [![Stillwater landscape](screenshots/stillwater.png)](https://ambient-worlds.pages.dev/) |
+
+[한국어](#한국어) · [English](#english)
+
+## 한국어
+
 평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다.
 
 명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.
@@ -11,13 +19,9 @@
 - **Journey** — 해안, 사막, 황혼 테마를 오가며, 아이소메트릭 시점에서 달리는 자동차를 중심으로 풍경이 이어지는 장면
 - **Stillwater** — 물, 빛, 식물과 물고기가 움직이는 고요한 연못 풍경
 
-| Journey | Stillwater |
-| --- | --- |
-| [![Journey 풍경](screenshots/journey.png)](https://ambient-worlds.pages.dev/) | [![Stillwater 풍경](screenshots/stillwater.png)](https://ambient-worlds.pages.dev/) |
-
 비슷한 프로젝트를 만들고 싶은 분들에게 도움이 되기를 바랍니다.
 
----
+## English
 
 A visual player for peaceful landscapes.
 
