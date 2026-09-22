@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Glass Valley adapter</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#173b47}iframe{position:fixed;inset:0;border:0;width:100%;height:100%}#error{display:none;color:#eef1de;padding:40px;font:14px system-ui}.failed #error{display:block}.failed iframe{display:none}</style></head>
+<body><iframe id="world" src="./source/player.html?offline=1&amp;player=1&amp;paused=1" title="Glass Valley"></iframe><div id="error">Glass Valley를 준비하지 못했습니다.</div>
+<script type="module">
+import { connectWorld } from "../../app/adapter.js";
+const frame = document.querySelector("#world");
+connectWorld({
+  world: "glass-valley", frame, timeoutMs: 30000,
+  resolve() {
+    const api = frame.contentWindow?.__GLASS_VALLEY__;
+    const canvas = frame.contentDocument?.querySelector("#world");
+    if (!api || !canvas) return null;
+    return { ready: !api.state().changing, player: {
+      setPlaying(value) { api.pause(!value); return true; },
+      randomScene() { api.regenerate().catch(console.error); return true; },
+      nextScene() { return this.randomScene(); },
+      previousScene() { return this.randomScene(); },
+      drawTo(target) {
+        target.width = canvas.width; target.height = canvas.height;
+        target.getContext("2d").drawImage(canvas, 0, 0);
+        return true;
+      },
+      destroy() { api.destroy(); }
+    } };
+  },
+  prepare(doc) {
+    if (!doc || doc.querySelector("#ambientSourceUI")) return;
+    const style = doc.createElement("style"); style.id = "ambientSourceUI";
+    style.textContent = "html,body,canvas{user-select:none!important;-webkit-user-select:none!important}.ui,.popover,#restore,#loader,#error,#toast,#flash,#veil{display:none!important}";
+    doc.head.append(style);
+    const reportError = () => parent.postMessage({ source:"ambient-world",world:"glass-valley",type:"error" }, location.origin);
+    const sourceError = doc.querySelector("#error");
+    if (sourceError) {
+      new MutationObserver(() => { if (sourceError.classList.contains("open")) reportError(); })
+        .observe(sourceError, { attributes:true, attributeFilter:["class"] });
+      if (sourceError.classList.contains("open")) reportError();
+    }
+    doc.querySelector("canvas#world")?.addEventListener("webglcontextlost", reportError, { once:true });
+    let lastActivity = 0;
+    const reportActivity = () => {
+      const now = performance.now();
+      if (now - lastActivity < 100) return;
+      lastActivity = now;
+      parent.postMessage({ source:"ambient-world",world:"glass-valley",type:"activity" }, location.origin);
+    };
+    doc.addEventListener("pointermove", reportActivity, { passive:true });
+    doc.addEventListener("pointerdown", reportActivity, { passive:true });
+    const shortcuts = new Map([[" "," "],["p"," "],["r","r"],["m","m"],["f","f"],["h","f"],["escape","escape"]]);
+    doc.addEventListener("keydown", event => {
+      if (event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+      const key = event.key.toLowerCase();
+      const action = shortcuts.get(key) ?? (/^[1-9]$/.test(key) ? key : null);
+      if (!action) return;
+      event.preventDefault(); event.stopImmediatePropagation();
+      parent.postMessage({ source:"ambient-world",world:"glass-valley",type:"shortcut",key:action }, location.origin);
+    }, true);
+  }
+});
+</script></body></html>

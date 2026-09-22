@@ -97,10 +97,14 @@ export class WorldMusic {
     family.retireAt = value === 0 ? t + seconds : null;
   }
   async select(id) {
-    if (!MUSIC_PROFILES[id] || this.disposed) return;
+    if (this.disposed) return;
     this.world = id;
     if (!this.context || this.muted) return;
     this.update();
+    if (!MUSIC_PROFILES[id]) {
+      for (const family of this.families.values()) if (family.retireAt === null) this.ramp(family, 0);
+      return;
+    }
     const existing = this.families.get(id);
     if (existing) {
       if (existing.retireAt !== null) this.ramp(existing, 1);
@@ -145,7 +149,7 @@ export class WorldMusic {
   }
   tick() {
     this.update();
-    if (!this.muted && this.context && !this.families.has(this.world) && !this.preparing && this.families.size < 2) {
+    if (!this.muted && this.context && MUSIC_PROFILES[this.world] && !this.families.has(this.world) && !this.preparing && this.families.size < 2) {
       this.select(this.world).catch(() => { this.muted = true; this.sync(); this.onError(); });
     }
   }

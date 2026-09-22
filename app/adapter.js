@@ -49,7 +49,13 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
     randomScene: () => change("randomScene"),
     nextScene: () => change("nextScene"),
     previousScene: () => change("previousScene"),
-    capture(target) { return ready ? resolve().player.drawTo(target) : false; }
+    capture(target) { return ready ? resolve().player.drawTo(target) : false; },
+    destroy() {
+      if (disposed) return;
+      disposed = true;
+      clearTimeout(timer);
+      try { resolve()?.player?.destroy?.(); } catch { /* The source may already be unloading. */ }
+    }
   });
   window.addEventListener("message", event => {
     if (event.source !== parent) return;
@@ -59,6 +65,6 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
     if (method) window.ambientWorld[method](m.value);
   });
   frame.addEventListener("load", () => { try { prepare(frame.contentDocument); } catch {} poll(); });
-  window.addEventListener("pagehide", () => { disposed = true; clearTimeout(timer); }, { once: true });
+  window.addEventListener("pagehide", () => window.ambientWorld.destroy(), { once: true });
   poll();
 }

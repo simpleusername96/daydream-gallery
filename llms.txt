@@ -6,12 +6,13 @@ Ambient Worlds is made through human art direction and selection with GPT-based 
 
 ## Experience
 
-- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Watch Journey and Stillwater, switch scenes, pause playback, or listen with optional sound.
+- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Watch Journey, Stillwater, and Glass Valley, switch scenes, pause playback, or listen with optional sound where available.
 
 ## Available worlds
 
 - Journey: An isometric drive through changing coastal, desert, forest, and dusk landscapes.
 - Stillwater: A quiet pond where water, light, plants, leaves, and fish move together.
+- Glass Valley: A silent forward journey through a Korean folk painting-inspired stained-glass valley; drag to look around.
 
 ## Source
 

@@ -13,17 +13,18 @@ const state = {
   index: 0, playing: !reducedMotion.matches, muted: true,
   frame: null, ready: false, busy: false, mountToken: 0,
   capabilities: { play: false, scenes: false }, idleTimer: 0, statusTimer: 0,
-  loadTimer: 0, noticeTimer: 0, slowTimer: 0, failed: false, transitionStart: 0, lastTransitionMs: 0, hasFrozen: false
+  loadTimer: 0, noticeTimer: 0, slowTimer: 0, failed: false, transitionStart: 0, lastTransitionMs: 0, hasFrozen: false,
+  glassValleyHintShown: false
 };
 for (const id of WORLD_ORDER) {
   const option = document.createElement("option"); option.value = id; option.textContent = WORLDS[id].label; switcher.append(option);
 }
 const notice = $("loadingNotice"), loadingText = $("loadingText"), retry = $("retryWorld");
 const activeWorld = () => WORLDS[WORLD_ORDER[state.index]];
-function setStatus(message, persistent = false) {
+function setStatus(message, persistent = false, durationMs = 2400) {
   clearTimeout(state.statusTimer);
   status.textContent = message; status.classList.toggle("visible", Boolean(message));
-  if (message && !persistent) state.statusTimer = setTimeout(() => { status.textContent = ""; status.classList.remove("visible"); }, 2400);
+  if (message && !persistent) state.statusTimer = setTimeout(() => { status.textContent = ""; status.classList.remove("visible"); }, durationMs);
 }
 function showChrome() {
   document.body.classList.remove("chromeHidden"); clearTimeout(state.idleTimer);
@@ -39,8 +40,10 @@ function updateControls() {
   playPause.setAttribute("aria-pressed", String(!state.playing));
   playPause.setAttribute("aria-label", state.playing ? "정지" : "재생");
   playPause.title = state.playing ? "정지" : "재생"; playPause.classList.toggle("paused", !state.playing);
-  sound.setAttribute("aria-pressed", String(!state.muted)); sound.classList.toggle("soundEnabled", !state.muted);
-  sound.title = state.muted ? "소리 켜기" : "소리 끄기"; sound.setAttribute("aria-label", sound.title);
+  const hasMusic = activeWorld().music !== false;
+  sound.disabled = !hasMusic;
+  sound.setAttribute("aria-pressed", String(hasMusic && !state.muted)); sound.classList.toggle("soundEnabled", hasMusic && !state.muted);
+  sound.title = !hasMusic ? "이 장면에는 소리가 없습니다" : state.muted ? "소리 켜기" : "소리 끄기"; sound.setAttribute("aria-label", sound.title);
   random.disabled = !state.ready || state.busy || !state.capabilities.scenes;
   $("stage").setAttribute("aria-busy", String(!state.ready || state.busy));
 }
@@ -113,12 +116,14 @@ function mountWorld(index, force = false) {
   const token = ++state.mountToken;
   state.index = nextIndex; state.ready = false; state.busy = false; state.capabilities = { play:false, scenes:false };
   clearTimeout(state.loadTimer);
+  try { bridge()?.destroy?.(); } catch { /* The outgoing frame may already be gone. */ }
   state.frame?.remove(); state.frame = null; worldSlot.replaceChildren();
   const world = activeWorld();
   backdrop.style.backgroundImage = world.fallbackImage ? 'url("' + world.fallbackImage + '")' : "none";
   backdrop.classList.toggle("hasImage", Boolean(world.fallbackImage));
   const frame = document.createElement("iframe");
   frame.className = "worldFrame"; frame.title = world.label + " world"; frame.tabIndex = -1;
+  frame.classList.toggle("interactive", world.interactive === true);
   frame.allow = "autoplay"; frame.referrerPolicy = "strict-origin-when-cross-origin";
   state.frame = frame;
   beginLoading(world.label);
@@ -150,8 +155,19 @@ function audioError() {
   setStatus("소리를 시작하지 못했습니다. 소리 버튼을 다시 눌러 주세요.");
 }
 function toggleSound() {
+  if (activeWorld().music === false) return;
   state.muted = !state.muted; updateControls(); showChrome();
   music.setMuted(state.muted).catch(audioError);
+}
+function handleShortcut(key) {
+  key = key.toLowerCase();
+  if (key === "f") hideChrome();
+  else if (key === "escape") hideChrome();
+  else showChrome();
+  if (key === " ") togglePlaying();
+  else if (key === "r") changeScene();
+  else if (key === "m") toggleSound();
+  else if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]);
 }
 switcher.addEventListener("change", () => { showChrome(); selectWorld(switcher.value); });
 retry.addEventListener("click", () => mountWorld(state.index, true));
@@ -163,22 +179,28 @@ window.addEventListener("message", event => {
   if (event.source !== state.frame?.contentWindow) return;
   const message = event.data;
   if (message?.source !== "ambient-world" || message.world !== activeWorld().id) return;
-  if (message.type === "ready") { finishReady(message.capabilities); setStatus(activeWorld().label); }
+  if (message.type === "ready") {
+    finishReady(message.capabilities);
+    if (activeWorld().id === "glass-valley" && !state.glassValleyHintShown) {
+      state.glassValleyHintShown = true;
+      setStatus("화면을 드래그해 좌우를 둘러보세요", false, 5000);
+    } else setStatus(activeWorld().label);
+  }
   if (message.type === "error") failLoading();
   if (message.type === "loading") { state.busy = true; updateControls(); }
   if (message.type === "status") setStatus(message.message, Boolean(message.persistent));
+  if (message.type === "shortcut" && typeof message.key === "string") handleShortcut(message.key);
+  if (message.type === "activity") showChrome();
 });
 window.addEventListener("keydown", event => {
   if (event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
   if (event.target.tagName === "BUTTON" && [" ","Enter"].includes(event.key)) return;
-  const key = event.key.toLowerCase(); showChrome();
+  const key = event.key.toLowerCase();
   if ([" ","r"].includes(key)) event.preventDefault();
-  if (key === " ") togglePlaying();
-  else if (key === "r") changeScene();
-  else if (key === "m") toggleSound();
-  else if (key === "f") hideChrome();
-  else if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]);
+  handleShortcut(key);
 });
+// Native select menus can consume Escape keydown while still delivering keyup.
+window.addEventListener("keyup", event => { if (event.key === "Escape") hideChrome(); });
 for (const event of ["pointermove","pointerdown","focusin"]) window.addEventListener(event, showChrome, { passive:true });
 let lastTick = performance.now();
 const timer = setInterval(() => {
