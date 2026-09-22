@@ -28,7 +28,7 @@ button:focus-visible, select:focus-visible, summary:focus-visible, a:focus-visib
   background: #080b0d center / cover no-repeat;
   opacity: 0;
   transform: scale(1.01);
-  transition: opacity .7s var(--ease);
+  transition: opacity .15s var(--ease);
 }
 #referenceBackdrop.hasImage { opacity: 1; }
 #referenceBackdrop::after {

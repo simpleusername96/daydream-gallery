@@ -62,7 +62,7 @@ function syncWorldState() {
   music.setPlaying(state.playing); music.setHidden(document.hidden);
 }
 function holdFrame(automatic = false) {
-  frozen.style.transitionDuration = automatic ? "1.4s" : ".65s";
+  frozen.style.transitionDuration = reducedMotion.matches ? "0s" : automatic ? "1.4s" : ".2s";
   if (!state.hasFrozen) {
     try { state.hasFrozen = Boolean(bridge()?.capture(frozen)); } catch { state.hasFrozen = false; }
   }
@@ -121,6 +121,13 @@ function mountWorld(index, force = false) {
   const world = activeWorld();
   backdrop.style.backgroundImage = world.fallbackImage ? 'url("' + world.fallbackImage + '")' : "none";
   backdrop.classList.toggle("hasImage", Boolean(world.fallbackImage));
+  if (world.fallbackImage) {
+    const preview = new Image(); preview.src = world.fallbackImage;
+    preview.decode().then(() => {
+      if (token !== state.mountToken || state.ready || state.failed) return;
+      frozen.classList.remove("holding"); state.hasFrozen = false;
+    }).catch(() => {}); // Keep the outgoing capture if the preview cannot load.
+  }
   const frame = document.createElement("iframe");
   frame.className = "worldFrame"; frame.title = world.label + " world"; frame.tabIndex = -1;
   frame.classList.toggle("interactive", world.interactive === true);

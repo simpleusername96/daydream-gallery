@@ -37,7 +37,16 @@ class MeshBuilder {
   build(){return{vertices:new Float32Array(this.vertices),indices:new Uint32Array(this.indices)};}
 }
 function ellipsoid(b,p,r,c,kind=2,variation=0){b.grid(10,20,(u,v)=>{const a=u*TAU,ph=v*Math.PI,n=[Math.sin(ph)*Math.cos(a),Math.cos(ph),Math.sin(ph)*Math.sin(a)];return[[p[0]+n[0]*r[0],p[1]+n[1]*r[1],p[2]+n[2]*r[2]],normalize([n[0]/r[0],n[1]/r[1],n[2]/r[2]]),c,[u,v],kind,variation];});}
-function tube(b,points,radius,c,kind=3,segments=18,sides=8,endRadius=.035,variation=0){segments=Math.max(5,Math.round(segments*(b.detail||1)));sides=Math.max(3,Math.round(sides*Math.sqrt(b.detail||1)));b.grid(segments,sides,(u,v)=>{const p=catmull(points,v),t=normalize(sub(catmull(points,Math.min(1,v+.002)),catmull(points,Math.max(0,v-.002)))),axis=Math.abs(t[1])<.95?[0,1,0]:[1,0,0],n=normalize(cross(t,axis)),bn=cross(t,n),a=u*TAU,normal=add(scale(n,Math.cos(a)),scale(bn,Math.sin(a))),r=radius*(1-v)+endRadius*v;return[add(p,scale(normal,r)),normal,c,[u,v],kind,variation];});}
+function tube(b,points,radius,c,kind=3,segments=18,sides=8,endRadius=.035,variation=0){
+ segments=Math.max(5,Math.round(segments*(b.detail||1)));sides=Math.max(3,Math.round(sides*Math.sqrt(b.detail||1)));
+ // Every vertex in a ring shares the spline position and tangent frame.
+ let row=-1,p,n,bn,r;
+ b.grid(segments,sides,(u,v)=>{
+  if(v!==row){row=v;p=catmull(points,v);const t=normalize(sub(catmull(points,Math.min(1,v+.002)),catmull(points,Math.max(0,v-.002)))),axis=Math.abs(t[1])<.95?[0,1,0]:[1,0,0];n=normalize(cross(t,axis));bn=cross(t,n);r=radius*(1-v)+endRadius*v;}
+  const a=u*TAU,normal=add(scale(n,Math.cos(a)),scale(bn,Math.sin(a)));
+  return[add(p,scale(normal,r)),normal,c,[u,v],kind,variation];
+ });
+}
 /** Hand-shaped scalloped pine canopy, not a generic sphere or cone. */
 function canopy(b,p,r,c,variation){b.grid(8,24,(u,v)=>{const a=u*TAU,phi=v*Math.PI,scallop=1+.075*Math.cos(a*7+variation)+.035*Math.sin(a*11),rad=Math.sin(phi)*scallop,n=normalize([Math.cos(a)*Math.sin(phi)/r[0],Math.cos(phi)/r[1],Math.sin(a)*Math.sin(phi)/r[2]]);return[[p[0]+Math.cos(a)*rad*r[0],p[1]+Math.cos(phi)*r[1]+.10*Math.sin(a*5)*Math.sin(phi),p[2]+Math.sin(a)*rad*r[2]],n,c,[u,v],2,variation];});}
 function quad(x0,z0,x1,z1,y,kind,c){const b=new MeshBuilder();b.grid(1,1,(u,v)=>[[x0+(x1-x0)*u,y,z0+(z1-z0)*v],[0,1,0],color(c),[u,v],kind,0]);return b.build();}

@@ -24,6 +24,7 @@
   <title>Ambient Worlds — 평화로운 풍경 플레이어</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="app/styles.css">
+  <link rel="preload" as="image" href="app/previews/journey.webp" fetchpriority="high">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -46,7 +47,7 @@
 </head>
 <body>
   <main id="stage" aria-label="현재 비주얼 월드">
-    <div id="referenceBackdrop" aria-hidden="true"></div>
+    <div id="referenceBackdrop" class="hasImage" style="background-image:url('app/previews/journey.webp')" aria-hidden="true"></div>
     <div id="worldSlot"></div>
     <canvas id="frozenScene" aria-hidden="true"></canvas>
     <div id="transitionVeil" aria-hidden="true"></div>
