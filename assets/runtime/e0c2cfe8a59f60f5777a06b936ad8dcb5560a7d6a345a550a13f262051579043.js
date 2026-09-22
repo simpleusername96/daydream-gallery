@@ -1208,7 +1208,7 @@ class NatureSound{
  function saveURL(){try{history.replaceState(null,'',`#theme=${world.theme}&seed=${world.seed}&z=${state.distance.toFixed(1)}`)}catch{}}
  function choose(theme,newSeed=world.seed){
    if(!(theme in THEMES)||contextLost)return;
-   if(ready){renderer.render(state);const frozen=$('transitionFrame');frozen.width=canvas.width;frozen.height=canvas.height;frozen.getContext('2d').drawImage(canvas,0,0);frozen.style.visibility='visible';$('loading').classList.add('frozen');}
+   if(ready&&!document.documentElement.classList.contains('ambient-embedded')){renderer.render(state);const frozen=$('transitionFrame');frozen.width=canvas.width;frozen.height=canvas.height;frozen.getContext('2d').drawImage(canvas,0,0);frozen.style.visibility='visible';$('loading').classList.add('frozen');}
    ready=false;state.loading=true;window.__wander.ready=false;keyState.clear();$('loading').classList.remove('done');document.querySelectorAll('.ui').forEach(el=>el.inert=true);dirty=true;last=0;
    seed=Number(newSeed)>>>0;world=new World(seed,theme);renderer.reset(world);state.distance=80;state.start=80;state.travelled=0;state.hour=world.p.time;state.clock=0;state.lane=state.steerLane=-1.5;state.vehicle.reset(world,80);$('hour').value=state.hour;$('seed').value=world.seed;document.querySelectorAll('[data-theme]').forEach(b=>b.classList.toggle('selected',b.dataset.theme===theme));saveURL();sound.select(theme).catch(e=>toast(e.message));
  }

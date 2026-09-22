@@ -11,7 +11,7 @@ const clock = new PlaybackClock(), music = new WorldMusic(audioError);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const state = {
   index: 0, playing: !reducedMotion.matches, muted: true,
-  frame: null, ready: false, busy: false, mountToken: 0,
+  frame: null, previousFrame: null, ready: false, busy: false, mountToken: 0,
   capabilities: { play: false, scenes: false }, idleTimer: 0, statusTimer: 0,
   loadTimer: 0, slowTimer: 0, failed: false, transitionStart: 0, lastTransitionMs: 0,
   glassValleyHintShown: false
@@ -21,9 +21,10 @@ for (const id of WORLD_ORDER) {
 }
 const notice = $("loadingNotice"), loadingText = $("loadingText"), retry = $("retryWorld");
 const activeWorld = () => WORLDS[WORLD_ORDER[state.index]];
-function setStatus(message, persistent = false, durationMs = 2400) {
+function setStatus(message, persistent = false, durationMs = 2400, instruction = false) {
   clearTimeout(state.statusTimer);
   status.textContent = message; status.classList.toggle("visible", Boolean(message));
+  status.classList.toggle("instruction", instruction);
   if (message && !persistent) state.statusTimer = setTimeout(() => { status.textContent = ""; status.classList.remove("visible"); }, durationMs);
 }
 function showChrome() {
@@ -47,7 +48,11 @@ function updateControls() {
   random.disabled = !state.ready || state.busy || !state.capabilities.scenes;
   $("stage").setAttribute("aria-busy", String(!state.ready || state.busy));
 }
-function bridge() { try { return state.frame?.contentWindow?.ambientWorld ?? null; } catch { return null; } }
+function bridge(frame = state.frame) { try { return frame?.contentWindow?.ambientWorld ?? null; } catch { return null; } }
+function retireFrame(frame) {
+  try { bridge(frame)?.destroy?.(); } catch { /* The source may already be gone. */ }
+  frame?.remove();
+}
 function sendControl(action, value) {
   const method = { "set-playing":"setPlaying", "set-muted":"setMuted", "random-scene":"randomScene", "next-scene":"nextScene", "previous-scene":"previousScene" }[action];
   const direct = bridge();
@@ -59,6 +64,7 @@ function sendControl(action, value) {
 function syncWorldState() {
   sendControl("set-playing", state.playing && !document.hidden);
   sendControl("set-muted", true);
+  try { bridge(state.previousFrame)?.setPlaying(state.playing && !document.hidden); } catch { /* A retired source may be unloading. */ }
   music.setPlaying(state.playing); music.setHidden(document.hidden);
 }
 function coverLoading() {
@@ -78,6 +84,7 @@ function beginLoading(label) {
 }
 function failLoading() {
   clearLoading(); state.failed = true; state.ready = false; state.busy = false;
+  if (!state.frame?.classList.contains("ready")) { retireFrame(state.frame); state.frame = null; }
   notice.hidden = false; retry.hidden = false; notice.classList.add("failed");
   loadingText.textContent = "장면을 불러오지 못했습니다.";
   updateControls(); showChrome();
@@ -94,6 +101,7 @@ function finishReady(capabilities) {
   state.lastTransitionMs = performance.now() - state.transitionStart;
   syncWorldState(); updateControls();
   state.frame?.classList.add("ready");
+  retireFrame(state.previousFrame); state.previousFrame = null;
   const token = state.mountToken;
   requestAnimationFrame(() => {
     if (token !== state.mountToken || state.busy) return;
@@ -105,10 +113,13 @@ function mountWorld(index, force = false) {
   if (!force && !state.failed && state.frame && nextIndex === state.index) { updateSelection(); updateControls(); return; }
   coverLoading();
   const token = ++state.mountToken;
+  // Keep only the visible outgoing scene while one incoming scene initializes.
+  // Rapid selections retire the pending scene, never accumulate hidden renderers.
+  if (!state.previousFrame && state.frame?.classList.contains("ready")) { state.previousFrame = state.frame; state.previousFrame.inert = true; }
+  else retireFrame(state.frame);
+  state.frame = null;
   state.index = nextIndex; state.ready = false; state.busy = false; state.capabilities = { play:false, scenes:false };
   clearTimeout(state.loadTimer);
-  try { bridge()?.destroy?.(); } catch { /* The outgoing frame may already be gone. */ }
-  state.frame?.remove(); state.frame = null; worldSlot.replaceChildren();
   const world = activeWorld();
   const frame = document.createElement("iframe");
   frame.className = "worldFrame"; frame.title = world.label + " world"; frame.tabIndex = -1;
@@ -172,7 +183,7 @@ window.addEventListener("message", event => {
     finishReady(message.capabilities);
     if (activeWorld().id === "glass-valley" && !state.glassValleyHintShown) {
       state.glassValleyHintShown = true;
-      setStatus("화면을 드래그해 좌우를 둘러보세요", false, 5000);
+      setStatus("화면을 드래그해 좌우로 둘러보세요", false, 8000, true);
     } else setStatus(activeWorld().label);
   }
   if (message.type === "error") failLoading();
@@ -204,7 +215,7 @@ const timer = setInterval(() => {
 }, 250);
 document.addEventListener("visibilitychange", () => { lastTick = performance.now(); syncWorldState(); });
 reducedMotion.addEventListener("change", event => { if (event.matches) { state.playing = false; syncWorldState(); updateControls(); } });
-window.addEventListener("pagehide", () => { clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); music.dispose(); }, { once:true });
+window.addEventListener("pagehide", () => { clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); retireFrame(state.frame); retireFrame(state.previousFrame); music.dispose(); }, { once:true });
 // Read-only diagnostics for actual-browser checks; no authoring surface.
 window.ambientPlayer = Object.freeze({ snapshot: () => ({ world:activeWorld().id, mode:"fixed", playing:state.playing, muted:state.muted,
   ready:state.ready, busy:state.busy, failed:state.failed, worldMs:clock.worldMs, sceneMs:clock.sceneMs,

@@ -10,7 +10,7 @@ connectWorld({
  resolve(){const api=frame.contentWindow?.__wander;return api?{ready:api.ready,player:api.player}:null;},
  prepare(doc){if(!doc?.querySelector("#landscape")||doc.querySelector("#ambientSourceUI"))return;
  const style=doc.createElement("style");style.id="ambientSourceUI";
- style.textContent="header,.left-hud,.themes,.actions,#settings,#hint,#toast,.touch-controls{display:none!important}";
+ style.textContent="header,.left-hud,.themes,.actions,#settings,#hint,#toast,#loading,.touch-controls{display:none!important}";
  doc.head.append(style);doc.body.classList.add("hide-ui");}
 });
 </script></body></html>
