@@ -1,6 +1,8 @@
 // Original Ambient Worlds scores. Native synthesis only; no downloaded samples.
 export const LOOP_SECONDS = 32;
 export const MUSIC_PROFILES = Object.freeze({
+  "glass-valley": { name: "Glass Valley · 유리 계곡", cutoff: 1250, pad: "sine", pluck: "sine", melody: [74,81,78,76,69,74,73,71], air: 260 },
+  "quiet-ascent": { name: "Quiet Ascent · 고요한 상승", cutoff: 680, pad: "sine", pluck: "sine", melody: [62,69,66,64,59,62,66,64], air: 120 },
   meadow: { name: "Meadow · 풀빛", cutoff: 1700, pad: "sine", pluck: "triangle", melody: [74,78,81,76,74,71,69,73], air: 700 },
   journey: { name: "Journey · 먼 길", cutoff: 1300, pad: "triangle", pluck: "sine", melody: [69,74,76,73,71,69,66,69], air: 420 },
   stillwater: { name: "Stillwater · 잔물결", cutoff: 1100, pad: "sine", pluck: "sine", melody: [78,76,74,81,78,74,73,76], air: 240 }

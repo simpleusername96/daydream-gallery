@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiet Ascent adapter</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0e1025}iframe{position:fixed;inset:0;border:0;width:100%;height:100%}#error{display:none;color:#dce5df;background:#0e1025;padding:40px;font:14px system-ui}.failed #error{display:block}.failed iframe{display:none}</style></head>
+<body><iframe id="world" src="./source/index.html" title="Quiet Ascent"></iframe><div id="error">Quiet Ascent를 준비하지 못했습니다.</div>
+<script type="module">
+import { connectWorld } from "../../app/adapter.js";
+const frame = document.querySelector("#world");
+connectWorld({
+  world: "quiet-ascent", frame, scenes: true,
+  resolve() {
+    const api = frame.contentWindow?.Ascent;
+    const canvas = frame.contentDocument?.querySelector("#space");
+    if (!api?.stats().ready || !canvas) return null;
+    return { ready: true, player: {
+      randomScene() { return api.randomScene(); },
+      nextScene() { return api.nextScene(); },
+      previousScene() { return api.previousScene(); },
+      destroy() { api.destroy(); },
+      setPlaying(value) { if (value) api.resume(); else api.pause(); return true; },
+      drawTo(target) {
+        target.width = canvas.width; target.height = canvas.height;
+        target.getContext("2d").drawImage(canvas, 0, 0);
+        return true;
+      }
+    } };
+  }
+});
+</script></body></html>
