@@ -24,7 +24,6 @@
   <title>Ambient Worlds — 평화로운 풍경 플레이어</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="app/styles.css">
-  <link rel="preload" as="image" href="app/previews/journey.webp" fetchpriority="high">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -46,13 +45,11 @@
   </script>
 </head>
 <body>
-  <main id="stage" aria-label="현재 비주얼 월드">
-    <div id="referenceBackdrop" class="hasImage" style="background-image:url('app/previews/journey.webp')" aria-hidden="true"></div>
+  <main id="stage" aria-label="현재 비주얼 월드" aria-busy="true">
     <div id="worldSlot"></div>
-    <canvas id="frozenScene" aria-hidden="true"></canvas>
-    <div id="transitionVeil" aria-hidden="true"></div>
+    <div id="transitionVeil" class="covering" aria-hidden="true"></div>
     <div id="worldStatus" role="status" aria-live="polite"></div>
-    <div id="loadingNotice" hidden><span class="loadingPulse" aria-hidden="true"></span><span id="loadingText" role="status" aria-live="polite"></span><button id="retryWorld" type="button" hidden>다시 시도</button></div>
+    <div id="loadingNotice"><span class="loadingPulse" aria-hidden="true"></span><span id="loadingText" role="status" aria-live="polite">Journey 준비 중</span><button id="retryWorld" type="button" hidden>다시 시도</button></div>
   </main>
 
   <nav id="worldSwitcher" class="chrome" aria-label="프로젝트 탐색">
