@@ -1,4 +1,5 @@
-export const WORLD_ORDER = ["journey", "stillwater", "glass-valley", "quiet-ascent"];
+// Append newly published worlds; the player shows the newest first.
+export const WORLD_ORDER = ["journey", "stillwater", "glass-valley", "quiet-ascent"].reverse();
 
 export const WORLDS = Object.freeze({
   "quiet-ascent": Object.freeze({
