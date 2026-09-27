@@ -1,3 +1,6 @@
+import { analytics } from "./analytics.js";
+import { ActiveTime } from "./analytics-time.js";
+const analyticsTime = new ActiveTime(analytics);
 import { WORLD_ORDER, WORLDS } from "./worlds.js";
 import { PlaybackClock } from "./playback.js";
 import { WorldMusic } from "./music.js";
@@ -111,6 +114,7 @@ function finishReady(capabilities) {
   });
 }
 function mountWorld(index, force = false) {
+  analyticsTime.flush();
   const nextIndex = (index + WORLD_ORDER.length) % WORLD_ORDER.length;
   if (!force && !state.failed && state.frame && nextIndex === state.index) { updateSelection(); updateControls(); return; }
   coverLoading();
@@ -123,6 +127,8 @@ function mountWorld(index, force = false) {
   state.index = nextIndex; state.ready = false; state.busy = false; state.capabilities = { play:false, scenes:false };
   clearTimeout(state.loadTimer);
   const world = activeWorld();
+  analyticsTime.select(world.id);
+  analytics.view();
   const frame = document.createElement("iframe");
   frame.className = "worldFrame"; frame.title = world.label + " world"; frame.tabIndex = -1;
   frame.classList.toggle("interactive", world.interactive === true);
@@ -136,6 +142,8 @@ function mountWorld(index, force = false) {
 }
 function changeScene(action = "random-scene") {
   if (!state.ready || state.busy || !state.capabilities.scenes) return;
+  analyticsTime.flush();
+  analytics.event("scene_change", {content_id:activeWorld().id, method:action});
   coverLoading(); state.busy = true; updateControls(); clock.resetScene();
   beginLoading();
   const token = ++state.mountToken;
@@ -166,6 +174,8 @@ function applyRoute(restoreFocus = false) {
   // Old #home links and unknown scenes resolve to the canonical home URL.
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   const previousId = activeWorld().id;
+  analyticsTime.select(null);
+  analytics.view();
   state.home = true; ++state.mountToken;
   clearLoading(); clearTimeout(state.idleTimer); setStatus('');
   retireFrame(state.frame); retireFrame(state.previousFrame);
@@ -181,6 +191,8 @@ function applyRoute(restoreFocus = false) {
 }
 window.addEventListener('hashchange', () => applyRoute(true));
 function togglePlaying() {
+  analyticsTime.flush();
+  analytics.event(state.playing ? "scene_pause" : "scene_resume", {content_id:activeWorld().id});
   state.playing = !state.playing; syncWorldState(); updateControls(); showChrome();
 }
 function audioError() {
@@ -227,7 +239,7 @@ window.addEventListener("message", event => {
   if (message.type === "activity") showChrome();
 });
 window.addEventListener("keydown", event => {
-  if (navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
+  if (event.target.closest?.(".analytics-consent, .analytics-settings") || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
   if (event.target.tagName === "BUTTON" && [" ","Enter"].includes(event.key)) return;
   const key = event.key.toLowerCase();
   if ([" ","r"].includes(key)) event.preventDefault();
@@ -237,6 +249,7 @@ for (const event of ["pointermove","pointerdown","focusin"]) window.addEventList
 let lastTick = performance.now();
 const timer = setInterval(() => {
   const now = performance.now(), delta = now - lastTick; lastTick = now;
+  analyticsTime.advance(delta, state.playing && !state.home && !document.hidden && state.ready && !state.busy && !state.failed);
   const action = clock.advance(delta, {
     running: state.playing && !state.home && !document.hidden && state.ready && !state.busy,
     auto: false, worldDurationMs: 0,
@@ -245,9 +258,9 @@ const timer = setInterval(() => {
   if (action === "scene") changeScene("next-scene");
   music.tick();
 }, 250);
-document.addEventListener("visibilitychange", () => { lastTick = performance.now(); syncWorldState(); });
+document.addEventListener("visibilitychange", () => { analyticsTime.flush(); lastTick = performance.now(); syncWorldState(); });
 reducedMotion.addEventListener("change", event => { if (event.matches) { state.playing = false; syncWorldState(); updateControls(); } });
-window.addEventListener("pagehide", () => { clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); retireFrame(state.frame); retireFrame(state.previousFrame); music.dispose(); }, { once:true });
+window.addEventListener("pagehide", () => { analyticsTime.flush(); clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); retireFrame(state.frame); retireFrame(state.previousFrame); music.dispose(); }, { once:true });
 // Read-only diagnostics for actual-browser checks; no authoring surface.
 window.ambientPlayer = Object.freeze({ snapshot: () => ({ view:state.home ? "home" : "player", world:state.home ? null : activeWorld().id, menuOpen:navigation.open, mode:"fixed", playing:state.playing, muted:state.muted,
   ready:state.ready, busy:state.busy, failed:state.failed, worldMs:clock.worldMs, sceneMs:clock.sceneMs,
