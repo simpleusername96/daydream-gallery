@@ -1,8 +1,8 @@
 // Shared protocol/lifetime only; each adapter selects its source-specific player.
-export function connectWorld({ world, frame, resolve, prepare = () => {}, timeoutMs = 20000 }) {
+export function connectWorld({ world, frame, resolve, prepare = () => {}, timeoutMs = 20000, scenes = true }) {
   let ready = false, playing = null, timer = 0, deadline = performance.now() + timeoutMs, disposed = false;
   const notify = (type, detail = {}) => parent.postMessage({ source: "ambient-world", world, type, ...detail }, location.origin === "null" ? "*" : location.origin);
-  const capabilities = { play: true, sound: false, scenes: true };
+  const capabilities = { play: true, sound: false, scenes };
   function poll() {
     clearTimeout(timer);
     if (disposed) return;
@@ -25,7 +25,7 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
     timer = setTimeout(poll, 50);
   }
   function change(method) {
-    if (!ready) return false;
+    if (!ready || !scenes) return false;
     const source = resolve();
     ready = false;
     deadline = performance.now() + timeoutMs;

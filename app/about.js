@@ -1,3 +1,5 @@
+import { WORLDS } from "./worlds.js";
+
 const COPY = {
   ko: {
     title: "Ambient Worlds — 평화로운 풍경 플레이어",
@@ -28,6 +30,30 @@ const COPY = {
     locale: "en_US"
   }
 };
+
+let currentWorldId = null;
+function updateArtworkCredit(worldId = currentWorldId) {
+  currentWorldId = worldId;
+  const section = document.getElementById("artworkCredit");
+  const artwork = WORLDS[worldId]?.artwork;
+  section.hidden = !artwork;
+  const ko = document.documentElement.lang === "ko";
+  const image = document.querySelector(".aboutCard img");
+  const source = artwork?.preview || "assets/previews/stillwater.png";
+  if (image.getAttribute("src") !== source) image.src = source;
+  image.alt = artwork ? artwork.title : COPY[ko ? "ko" : "en"].imageAlt;
+  image.style.objectFit = artwork ? "contain" : "cover";
+  if (!artwork) return;
+  document.getElementById("artworkTitle").textContent = artwork.title;
+  document.getElementById("artworkInstitution").textContent = artwork.institution;
+  document.getElementById("artworkInterpretation").textContent = ko
+    ? "원작의 형태와 색에서 영감을 받아 새로 그린 풍경입니다. 원작 사진을 사용하지 않으며, 원작의 복원이나 재현이 아닙니다."
+    : "An original landscape inspired by the artwork’s forms and colors. It uses newly generated art, not the original photograph or a restoration.";
+  const original = document.getElementById("artworkOriginal");
+  original.href = artwork.preview; original.textContent = ko ? "새로 그린 장면" : "Newly authored scene";
+  const museum = document.getElementById("artworkMuseum");
+  museum.href = artwork.url; museum.textContent = ko ? "영감을 받은 원작" : "Inspiration source";
+}
 
 const supportedLanguage = value => value === "ko" || value === "en";
 
@@ -71,6 +97,8 @@ function applyLanguage(language, persist = false) {
   setMeta('meta[name="twitter:title"]', "content", copy.title);
   setMeta('meta[name="twitter:description"]', "content", copy.description);
 
+  updateArtworkCredit();
+
   if (persist) {
     try { localStorage.setItem("ambient-worlds-language", language); } catch { /* Preference remains session-only. */ }
   }
@@ -93,4 +121,7 @@ function initializeLanguage() {
   }
 }
 
-if (typeof document !== "undefined") initializeLanguage();
+if (typeof document !== "undefined") {
+  initializeLanguage();
+  window.addEventListener("ambient-world-change", event => updateArtworkCredit(event.detail.world));
+}

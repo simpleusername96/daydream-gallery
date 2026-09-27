@@ -1,24 +1,23 @@
 import { WORLD_ORDER, WORLDS } from "./worlds.js";
 import { PlaybackClock } from "./playback.js";
 import { WorldMusic } from "./music.js";
+import { createNavigation } from "./navigation.js";
 
 const $ = id => document.getElementById(id);
 const worldSlot = $("worldSlot");
-const veil = $("transitionVeil"), status = $("worldStatus"), switcher = $("worldSelect");
+const veil = $("transitionVeil"), status = $("worldStatus");
 const random = $("randomScene");
 const playPause = $("playPause"), sound = $("sound");
 const clock = new PlaybackClock(), music = new WorldMusic(audioError);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const state = {
-  index: 0, playing: !reducedMotion.matches, muted: true,
+  home: true, index: 0, playing: !reducedMotion.matches, muted: true,
   frame: null, previousFrame: null, ready: false, busy: false, mountToken: 0,
   capabilities: { play: false, scenes: false }, idleTimer: 0, statusTimer: 0,
   loadTimer: 0, slowTimer: 0, failed: false, transitionStart: 0, lastTransitionMs: 0,
   glassValleyHintShown: false
 };
-for (const id of WORLD_ORDER) {
-  const option = document.createElement("option"); option.value = id; option.textContent = WORLDS[id].label; switcher.append(option);
-}
+const navigation = createNavigation({ order: WORLD_ORDER, worlds: WORLDS, onSelect: selectWorld, onHome: () => navigate("home") });
 const notice = $("loadingNotice"), loadingText = $("loadingText"), retry = $("retryWorld");
 const activeWorld = () => WORLDS[WORLD_ORDER[state.index]];
 function setStatus(message, persistent = false, durationMs = 2400, instruction = false) {
@@ -29,14 +28,17 @@ function setStatus(message, persistent = false, durationMs = 2400, instruction =
 }
 function showChrome() {
   document.body.classList.remove("chromeHidden"); clearTimeout(state.idleTimer);
-  state.idleTimer = setTimeout(() => { if (state.ready && !state.busy && !state.failed && !document.querySelector(".chrome:focus-within")) document.body.classList.add("chromeHidden"); }, 2600);
+  state.idleTimer = setTimeout(() => { if (!state.home && !navigation.open && state.ready && !state.busy && !state.failed && !document.querySelector(".chrome:focus-visible, .chrome :focus-visible, .chrome details[open]")) document.body.classList.add("chromeHidden"); }, 2600);
 }
 function hideChrome() {
   clearTimeout(state.idleTimer);
   document.activeElement?.blur?.();
   document.body.classList.add("chromeHidden");
 }
-function updateSelection() { switcher.value = activeWorld().id; }
+function updateSelection() {
+  navigation.showWorld(activeWorld().id);
+  window.dispatchEvent(new CustomEvent("ambient-world-change", { detail: { world: activeWorld().id } }));
+}
 function updateControls() {
   playPause.setAttribute("aria-pressed", String(!state.playing));
   playPause.setAttribute("aria-label", state.playing ? "정지" : "재생");
@@ -62,10 +64,10 @@ function sendControl(action, value) {
   return true;
 }
 function syncWorldState() {
-  sendControl("set-playing", state.playing && !document.hidden);
+  sendControl("set-playing", state.playing && !state.home && !document.hidden);
   sendControl("set-muted", true);
   try { bridge(state.previousFrame)?.setPlaying(state.playing && !document.hidden); } catch { /* A retired source may be unloading. */ }
-  music.setPlaying(state.playing); music.setHidden(document.hidden);
+  music.setPlaying(state.playing && !state.home); music.setHidden(document.hidden);
 }
 function coverLoading() {
   veil.classList.add("covering");
@@ -75,11 +77,11 @@ function clearLoading() {
   clearTimeout(state.loadTimer); clearTimeout(state.slowTimer);
   notice.hidden = true; retry.hidden = true; notice.classList.remove("failed"); state.failed = false;
 }
-function beginLoading(label) {
+function beginLoading() {
   clearLoading(); setStatus(""); showChrome();
-  loadingText.textContent = label + " 준비 중";
+  loadingText.textContent = "장면 준비 중";
   notice.hidden = false;
-  state.slowTimer = setTimeout(() => { loadingText.textContent = label + "을 준비하고 있습니다. 잠시만 기다려 주세요."; }, 8000);
+  state.slowTimer = setTimeout(() => { loadingText.textContent = "장면을 준비하고 있습니다. 잠시만 기다려 주세요."; }, 8000);
   state.loadTimer = setTimeout(failLoading, 31000);
 }
 function failLoading() {
@@ -126,7 +128,7 @@ function mountWorld(index, force = false) {
   frame.classList.toggle("interactive", world.interactive === true);
   frame.allow = "autoplay"; frame.referrerPolicy = "strict-origin-when-cross-origin";
   state.frame = frame;
-  beginLoading(world.label);
+  beginLoading();
   afterPaint(token, () => { frame.src = world.adapter; worldSlot.append(frame); });
   updateSelection(); updateControls();
   music.select(world.id).catch(audioError);
@@ -135,7 +137,7 @@ function mountWorld(index, force = false) {
 function changeScene(action = "random-scene") {
   if (!state.ready || state.busy || !state.capabilities.scenes) return;
   coverLoading(); state.busy = true; updateControls(); clock.resetScene();
-  beginLoading(activeWorld().label);
+  beginLoading();
   const token = ++state.mountToken;
   afterPaint(token, () => {
     const applied = sendControl(action);
@@ -144,9 +146,40 @@ function changeScene(action = "random-scene") {
 }
 function selectWorld(id) {
   const index = WORLD_ORDER.indexOf(id); if (index < 0) return;
-  mountWorld(index);
+  navigate(id);
 }
 
+function navigate(id) {
+  const hash = id === 'home' ? '' : '#' + id;
+  if (location.hash !== hash) history.pushState(null, '', location.pathname + location.search + hash);
+  applyRoute(true);
+}
+function applyRoute(restoreFocus = false) {
+  const id = location.hash.slice(1);
+  const index = WORLD_ORDER.indexOf(id);
+  if (index >= 0) {
+    state.home = false; $('stage').hidden = false;
+    navigation.showWorld(id); mountWorld(index); showChrome();
+    if (restoreFocus) $('openScenes').focus({ preventScroll: true });
+    return;
+  }
+  // Old #home links and unknown scenes resolve to the canonical home URL.
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  const previousId = activeWorld().id;
+  state.home = true; ++state.mountToken;
+  clearLoading(); clearTimeout(state.idleTimer); setStatus('');
+  retireFrame(state.frame); retireFrame(state.previousFrame);
+  state.frame = null; state.previousFrame = null;
+  state.ready = false; state.busy = false;
+  state.capabilities = { play: false, scenes: false };
+  clock.resetWorld(); music.setPlaying(false);
+  $('stage').hidden = true;
+  document.querySelector('#aboutPanel details').open = false;
+  document.body.classList.remove('chromeHidden');
+  navigation.showHome();
+  if (restoreFocus) navigation.focusHome(previousId);
+}
+window.addEventListener('hashchange', () => applyRoute(true));
 function togglePlaying() {
   state.playing = !state.playing; syncWorldState(); updateControls(); showChrome();
 }
@@ -161,6 +194,8 @@ function toggleSound() {
 }
 function handleShortcut(key) {
   key = key.toLowerCase();
+  if (navigation.open) return;
+  if (state.home) { if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]); return; }
   if (key === "f") hideChrome();
   else if (key === "escape") hideChrome();
   else showChrome();
@@ -169,7 +204,6 @@ function handleShortcut(key) {
   else if (key === "m") toggleSound();
   else if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]);
 }
-switcher.addEventListener("change", () => { showChrome(); selectWorld(switcher.value); });
 retry.addEventListener("click", () => mountWorld(state.index, true));
 random.addEventListener("click", () => { showChrome(); changeScene(); });
 playPause.addEventListener("click", togglePlaying);
@@ -184,7 +218,7 @@ window.addEventListener("message", event => {
     if (activeWorld().id === "glass-valley" && !state.glassValleyHintShown) {
       state.glassValleyHintShown = true;
       setStatus("화면을 드래그해 좌우로 둘러보세요", false, 8000, true);
-    } else setStatus(activeWorld().label);
+    } else setStatus("");
   }
   if (message.type === "error") failLoading();
   if (message.type === "loading") { state.busy = true; updateControls(); }
@@ -193,20 +227,18 @@ window.addEventListener("message", event => {
   if (message.type === "activity") showChrome();
 });
 window.addEventListener("keydown", event => {
-  if (event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
+  if (navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
   if (event.target.tagName === "BUTTON" && [" ","Enter"].includes(event.key)) return;
   const key = event.key.toLowerCase();
   if ([" ","r"].includes(key)) event.preventDefault();
   handleShortcut(key);
 });
-// Native select menus can consume Escape keydown while still delivering keyup.
-window.addEventListener("keyup", event => { if (event.key === "Escape") hideChrome(); });
 for (const event of ["pointermove","pointerdown","focusin"]) window.addEventListener(event, showChrome, { passive:true });
 let lastTick = performance.now();
 const timer = setInterval(() => {
   const now = performance.now(), delta = now - lastTick; lastTick = now;
   const action = clock.advance(delta, {
-    running: state.playing && !document.hidden && state.ready && !state.busy,
+    running: state.playing && !state.home && !document.hidden && state.ready && !state.busy,
     auto: false, worldDurationMs: 0,
     sceneDurationMs: state.capabilities.scenes ? activeWorld().sceneDurationMs : 0
   });
@@ -217,7 +249,7 @@ document.addEventListener("visibilitychange", () => { lastTick = performance.now
 reducedMotion.addEventListener("change", event => { if (event.matches) { state.playing = false; syncWorldState(); updateControls(); } });
 window.addEventListener("pagehide", () => { clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); retireFrame(state.frame); retireFrame(state.previousFrame); music.dispose(); }, { once:true });
 // Read-only diagnostics for actual-browser checks; no authoring surface.
-window.ambientPlayer = Object.freeze({ snapshot: () => ({ world:activeWorld().id, mode:"fixed", playing:state.playing, muted:state.muted,
+window.ambientPlayer = Object.freeze({ snapshot: () => ({ view:state.home ? "home" : "player", world:state.home ? null : activeWorld().id, menuOpen:navigation.open, mode:"fixed", playing:state.playing, muted:state.muted,
   ready:state.ready, busy:state.busy, failed:state.failed, worldMs:clock.worldMs, sceneMs:clock.sceneMs,
   lastTransitionMs:state.lastTransitionMs, frameCount:worldSlot.querySelectorAll("iframe").length, music:music.snapshot() }) });
-mountWorld(0); showChrome();
+applyRoute();

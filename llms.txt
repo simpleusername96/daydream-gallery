@@ -6,15 +6,17 @@ Ambient Worlds is made through human art direction and selection with GPT-based 
 
 ## Experience
 
-- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Watch Journey, Stillwater, Glass Valley, and Quiet Ascent, switch scenes, pause playback, or listen with optional background music in every world.
+- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Choose from six worlds, switch scenes, pause playback, or listen with optional sound.
 
 ## Available worlds
 
 - Journey: An isometric drive through changing coastal, desert, forest, and dusk landscapes.
 - Stillwater: A quiet pond where water, light, plants, leaves, and fish move together.
-- Glass Valley: A forward journey through a Korean folk painting-inspired stained-glass valley; drag to look around.
 
-- Quiet Ascent: A small rocket rising through sparse dark space, with downward-moving stars, gas and occasional planets.
+- Glass Valley: Travel through a stained-glass mountain valley.
+- Quiet Ascent: A rocket rises through a dark, slowly changing sky.
+- Peony Pattern: A flat flower ornament with gentle local movement.
+- White Sands: A small tree and one red apple above white dunes, with intermittent wind.
 
 ## Source
 

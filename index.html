@@ -44,17 +44,23 @@
     }
   </script>
 </head>
-<body>
-  <main id="stage" aria-label="현재 비주얼 월드" aria-busy="true">
+<body class="atHome">
+  <main id="homeGallery" aria-label="장면 선택"><h1 class="srOnly">Ambient Worlds</h1><div id="worldGrid"></div><input id="homeScrollPosition" type="range" min="0" max="0" value="0" step="1" aria-label="장면 목록 스크롤 위치" aria-controls="worldGrid" hidden></main>
+  <main id="stage" aria-label="현재 비주얼 월드" aria-busy="false" hidden>
     <div id="worldSlot"></div>
     <div id="transitionVeil" class="covering" aria-hidden="true"></div>
     <div id="worldStatus" role="status" aria-live="polite"></div>
-    <div id="loadingNotice"><span class="loadingPulse" aria-hidden="true"></span><span id="loadingText" role="status" aria-live="polite">장면 준비 중</span><button id="retryWorld" type="button" hidden>다시 시도</button></div>
+    <div id="loadingNotice" hidden><span class="loadingPulse" aria-hidden="true"></span><span id="loadingText" role="status" aria-live="polite">장면 준비 중</span><button id="retryWorld" type="button" hidden>다시 시도</button></div>
   </main>
 
-  <nav id="worldSwitcher" class="chrome" aria-label="프로젝트 탐색">
-    <select id="worldSelect" aria-label="프로젝트 선택"></select>
+  <a id="goHome" class="chrome iconButton" href="./" aria-label="홈으로 이동" title="홈으로 이동"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8M6 9v12h12V9M10 21v-7h4v7"/></svg></a>
+  <nav id="worldSwitcher" class="chrome" aria-label="장면 탐색">
+    <button id="openScenes" class="iconButton" type="button" aria-label="다른 장면 보기" aria-haspopup="dialog" aria-controls="sceneMenu" aria-expanded="false" title="다른 장면 보기"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="1.5"/><path d="M6 3h12M6 21h12"/></svg></button>
   </nav>
+  <dialog id="sceneMenu" aria-label="장면 선택">
+    <button id="closeScenes" class="iconButton" type="button" aria-label="닫기" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    <div class="sceneRail"><div id="sceneList" aria-label="다른 장면"></div></div>
+  </dialog>
 
   <aside id="aboutPanel" class="chrome" aria-label="Ambient Worlds 정보">
     <details>
@@ -67,6 +73,12 @@
           <div class="languageSwitch" role="group" aria-label="설명 언어">
             <button type="button" data-language="ko" aria-pressed="true">한국어</button>
             <button type="button" data-language="en" aria-pressed="false">English</button>
+          </div>
+          <div id="artworkCredit" hidden>
+            <p><strong id="artworkTitle"></strong></p>
+            <p id="artworkInstitution"></p>
+            <p id="artworkInterpretation"></p>
+            <p><a id="artworkOriginal" target="_blank" rel="noopener noreferrer"></a> · <a id="artworkMuseum" target="_blank" rel="noopener noreferrer"></a></p>
           </div>
           <h1>Ambient Worlds</h1>
           <p data-copy="description">평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다.</p>

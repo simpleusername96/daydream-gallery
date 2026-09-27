@@ -13,3 +13,7 @@ These notices apply to the listed components. They do not license Ambient Worlds
 - **Journey nature ambience** — original local synthesis dedicated to CC0 1.0; no third-party recordings, voices, melodies, or samples are used.
 
 CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+
+## Artwork inspiration
+
+- **Peony Pattern** — inspired by [Peonies and Rocks, Cleveland Museum of Art 2022.60](https://www.clevelandart.org/art/2022.60). The scene uses newly generated artwork; the original museum photograph is not included. The museum artwork’s open-access status does not license this generated scene.

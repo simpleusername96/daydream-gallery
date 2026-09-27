@@ -6,20 +6,28 @@
 
 <table>
   <tr>
-    <th width="50%" scope="col">Journey</th>
-    <th width="50%" scope="col">Stillwater</th>
+    <th width="50%" scope="col">White Sands</th>
+    <th width="50%" scope="col">Peony Pattern</th>
   </tr>
   <tr>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/"><img src="assets/previews/journey.png" width="800" alt="Journey landscape"></a></td>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/"><img src="assets/previews/stillwater.png" width="800" alt="Stillwater landscape"></a></td>
+    <td width="50%"><a href="https://ambient-worlds.pages.dev/#white-sands"><img src="assets/previews/white-sands.webp" width="800" alt="White Sands"></a></td>
+    <td width="50%"><a href="https://ambient-worlds.pages.dev/#peonies"><img src="assets/previews/peonies.webp" width="800" alt="Peony Pattern"></a></td>
   </tr>
   <tr>
     <th width="50%" scope="col">Glass Valley</th>
     <th width="50%" scope="col">Quiet Ascent</th>
   </tr>
   <tr>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/"><img src="assets/previews/glass-valley.png" width="800" alt="Glass Valley landscape"></a></td>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/"><img src="assets/previews/quiet-ascent.png" width="800" alt="Quiet Ascent landscape"></a></td>
+    <td width="50%"><a href="https://ambient-worlds.pages.dev/#glass-valley"><img src="assets/previews/glass-valley.webp" width="800" alt="Glass Valley"></a></td>
+    <td width="50%"><a href="https://ambient-worlds.pages.dev/#quiet-ascent"><img src="assets/previews/quiet-ascent.webp" width="800" alt="Quiet Ascent"></a></td>
+  </tr>
+  <tr>
+    <th width="50%" scope="col">Stillwater</th>
+    <th width="50%" scope="col">Journey</th>
+  </tr>
+  <tr>
+    <td width="50%"><a href="https://ambient-worlds.pages.dev/#stillwater"><img src="assets/previews/stillwater.webp" width="800" alt="Stillwater"></a></td>
+    <td width="50%"><a href="https://ambient-worlds.pages.dev/#journey"><img src="assets/previews/journey.webp" width="800" alt="Journey"></a></td>
   </tr>
 </table>
 
