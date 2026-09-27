@@ -46,11 +46,15 @@ function updateArtworkCredit(worldId = currentWorldId) {
   if (!artwork) return;
   document.getElementById("artworkTitle").textContent = artwork.title;
   document.getElementById("artworkInstitution").textContent = artwork.institution;
-  document.getElementById("artworkInterpretation").textContent = ko
+  const reflected = artwork.technique === "reflected-artwork";
+  document.getElementById("artworkInterpretation").textContent = reflected
+    ? (ko ? "〈모란과 괴석〉의 일부를 여덟 방향으로 반사한 만화경입니다. 자주꽃, 붉은꽃, 푸른 괴석을 자동으로 오갑니다. 미술관의 CC0 공개 이미지를 사용한 재구성이며 원작의 복원이 아닙니다."
+      : "An eightfold kaleidoscope sampling Peonies and Rocks. It automatically travels through purple peonies, red peonies and blue rocks, using the museum’s CC0 image. This is a contemporary reinterpretation, not a restoration.")
+    : ko
     ? "원작의 형태와 색에서 영감을 받아 새로 그린 풍경입니다. 원작 사진을 사용하지 않으며, 원작의 복원이나 재현이 아닙니다."
     : "An original landscape inspired by the artwork’s forms and colors. It uses newly generated art, not the original photograph or a restoration.";
   const original = document.getElementById("artworkOriginal");
-  original.href = artwork.preview; original.textContent = ko ? "새로 그린 장면" : "Newly authored scene";
+  original.href = artwork.preview; original.textContent = reflected ? (ko ? "반사한 장면" : "Reflected scene") : (ko ? "새로 그린 장면" : "Newly authored scene");
   const museum = document.getElementById("artworkMuseum");
   museum.href = artwork.url; museum.textContent = ko ? "영감을 받은 원작" : "Inspiration source";
 }

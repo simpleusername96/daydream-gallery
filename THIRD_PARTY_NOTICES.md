@@ -14,6 +14,6 @@ These notices apply to the listed components. They do not license Ambient Worlds
 
 CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
 
-## Artwork inspiration
+## Artwork
 
-- **Peony Pattern** — inspired by [Peonies and Rocks, Cleveland Museum of Art 2022.60](https://www.clevelandart.org/art/2022.60). The scene uses newly generated artwork; the original museum photograph is not included. The museum artwork’s open-access status does not license this generated scene.
+- **Peony Pattern** — samples and reflects the third painted panel of [Peonies and Rocks, Cleveland Museum of Art 2022.60](https://www.clevelandart.org/art/2022.60), early 1900s, Korea. The museum makes the artwork image available under CC0. The bundled image is worlds/peonies/source/assets/peonies.jpg. This contemporary kaleidoscope is not a restoration or the intact original arrangement. The artwork’s CC0 status does not license the application as a whole.

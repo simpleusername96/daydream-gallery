@@ -22,7 +22,7 @@ export const WORLDS = Object.freeze({
     "thumbnail": "assets/previews/peonies.webp",
     "label": "Peony Pattern",
     "adapter": "worlds/peonies/adapter.html",
-    "fallbackImage": "worlds/peonies/art/master.png",
+    "fallbackImage": "assets/previews/peonies.webp",
     "autoDurationMs": 0,
     "sceneDurationMs": 0,
     "music": false,
@@ -33,8 +33,9 @@ export const WORLDS = Object.freeze({
     },
     "artwork": {
       "title": "Peony Pattern · 모란 무늬",
-      "institution": "Inspired by Peonies and Rocks · CMA 2022.60",
-      "preview": "worlds/peonies/art/master.png",
+      "institution": "Peonies and Rocks · Cleveland Museum of Art · CC0",
+      "technique": "reflected-artwork",
+      "preview": "assets/previews/peonies.webp",
       "url": "https://www.clevelandart.org/art/2022.60"
     }
   },
