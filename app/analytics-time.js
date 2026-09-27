@@ -1,6 +1,6 @@
-// Only confirmed, visible, unpaused renderer time. No pre-consent replay.
+// Only confirmed, visible, unpaused renderer time. No disabled-period replay.
 export class ActiveTime {
-  constructor(analytics) {this.analytics=analytics;this.id=null;this.ms=0;this.started=false;analytics.onConsent(()=>{this.ms=0;this.started=false;});}
+  constructor(analytics) {this.analytics=analytics;this.id=null;this.ms=0;this.started=false;analytics.onChange(()=>{this.ms=0;this.started=false;});}
   select(id) {if(id===this.id)return;this.flush();this.id=id;this.ms=0;this.started=false;}
   advance(delta,running) {
     if(!running || !this.id || !this.analytics.allowed() || !Number.isFinite(delta) || delta<0)return;

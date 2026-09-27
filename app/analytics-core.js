@@ -1,7 +1,6 @@
-// Optional, consent-gated GA4. Preview hosts never send production analytics.
-export function startAnalytics({id, host, copy, privacyUrl, settingsParent, page}) {
+// GA4 starts on production visits. Preview hosts never send production analytics.
+export function startAnalytics({id, host, page}) {
   const key = 'analytics-consent-v1';
-  const lifetime = 180 * 24 * 60 * 60 * 1000;
   const production = location.hostname === host && location.protocol === 'https:';
   let choice = null, loaded = false, previousPage = '', lastTitle = '';
   const listeners = new Set();
@@ -10,7 +9,7 @@ export function startAnalytics({id, host, copy, privacyUrl, settingsParent, page
     catch { return null; }
   };
   choice = readChoice();
-  const allowed = () => production && choice === 'granted';
+  const allowed = () => production && choice !== 'denied';
   function gtag() { window.dataLayer.push(arguments); }
   function safeUrl(value, campaign = false) {
     try {
@@ -42,8 +41,7 @@ export function startAnalytics({id, host, copy, privacyUrl, settingsParent, page
     window['ga-disable-'+id]=false;
     if (!loaded) {
       window.dataLayer = window.dataLayer || [];
-      gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
-      gtag('consent','update',{analytics_storage:'granted'});
+      gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
       gtag('js',new Date());
       gtag('config',id,{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,cookie_domain:'none',cookie_expires:180*24*60*60,page_location:safeUrl(location.href,true),page_referrer:entryReferrer});
       const script=document.createElement('script');
@@ -52,10 +50,9 @@ export function startAnalytics({id, host, copy, privacyUrl, settingsParent, page
     } else gtag('consent','update',{analytics_storage:'granted'});
     view();
   }
-  function apply(value, persist=true) {
+  function apply(value) {
     choice=value;
-    if(persist) { const saved=JSON.stringify({value,expires:Date.now()+lifetime}); try {localStorage.setItem(key,saved);} catch {try {sessionStorage.setItem(key,saved);} catch { /* Choice remains valid in this document. */ }} }
-    if (value==='granted') activate();
+    if (value!=='denied') activate();
     else {
       window['ga-disable-'+id]=true;
       if (loaded) gtag('consent','update',{analytics_storage:'denied'});
@@ -67,22 +64,9 @@ export function startAnalytics({id, host, copy, privacyUrl, settingsParent, page
     }
     for (const callback of listeners) callback(allowed());
   }
-  const panel=document.createElement('section'); panel.className='analytics-consent'; panel.setAttribute('aria-label',copy.title); panel.hidden=choice!==null;
-  const title=document.createElement('strong'); title.textContent=copy.title;
-  const body=document.createElement('p'); body.textContent=copy.body;
-  const actions=document.createElement('div'); actions.className='analytics-actions';
-  const policy=document.createElement('a'); policy.href=privacyUrl; policy.textContent=copy.privacy;
-  let opener=null;
-  for(const [value,label] of [['denied',copy.decline],['granted',copy.accept]]) {
-    const button=document.createElement('button'); button.type='button';button.textContent=label;
-    button.addEventListener('click',()=>{apply(value);panel.hidden=true;opener?.focus({preventScroll:true});});actions.append(button);
-  }
-  actions.append(policy); panel.append(title,body,actions); document.body.append(panel);
-  const settings=document.createElement('button');settings.type='button';settings.className='analytics-settings';settings.textContent=copy.settings;
-  settings.addEventListener('click',()=>{opener=settings;panel.hidden=false;panel.querySelector('button').focus({preventScroll:true});});
-  (document.querySelector(settingsParent)||document.body).append(settings);
-  window.addEventListener('storage',event=>{if(event.key===key || event.key===null){apply(readChoice(),false);panel.hidden=choice!==null;}});
-  const api={allowed,view,onConsent(callback){listeners.add(callback);return()=>listeners.delete(callback);},event(name,params={}){if(allowed())gtag('event',name,{...currentPage(),...params});}};
+  // Preserve existing visitor opt-outs; new visits require no site prompt.
+  window.addEventListener('storage',event=>{if(event.key===key || event.key===null)apply(readChoice());});
+  const api={allowed,view,onChange(callback){listeners.add(callback);return()=>listeners.delete(callback);},event(name,params={}){if(allowed())gtag('event',name,{...currentPage(),...params});}};
   document.addEventListener('click',event=>{
     const anchor=event.target.closest?.('a[href]'); if(!anchor)return;
     const url=new URL(anchor.href);
