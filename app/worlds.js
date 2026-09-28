@@ -1,5 +1,5 @@
 // Reviewed public collection; development-only scenes stay private.
-export const WORLD_ORDER = ["white-sands","peonies","glass-valley","quiet-ascent","stillwater","journey"];
+export const WORLD_ORDER = ["white-sands","glass-valley","quiet-ascent","stillwater","journey"];
 
 export const WORLDS = Object.freeze({
   "white-sands": {
@@ -15,28 +15,6 @@ export const WORLDS = Object.freeze({
       "play": true,
       "sound": false,
       "scenes": true
-    }
-  },
-  "peonies": {
-    "id": "peonies",
-    "thumbnail": "assets/previews/peonies.webp",
-    "label": "Peony Pattern",
-    "adapter": "worlds/peonies/adapter.html",
-    "fallbackImage": "assets/previews/peonies.webp",
-    "autoDurationMs": 0,
-    "sceneDurationMs": 0,
-    "music": false,
-    "defaultCapabilities": {
-      "play": true,
-      "sound": false,
-      "scenes": true
-    },
-    "artwork": {
-      "title": "Peony Pattern · 모란 무늬",
-      "institution": "Peonies and Rocks · Cleveland Museum of Art · CC0",
-      "technique": "reflected-artwork",
-      "preview": "assets/previews/peonies.webp",
-      "url": "https://www.clevelandart.org/art/2022.60"
     }
   },
   "glass-valley": {

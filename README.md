@@ -5,30 +5,12 @@
 [한국어](#한국어) · [English](#english)
 
 <table>
-  <tr>
-    <th width="50%" scope="col">White Sands</th>
-    <th width="50%" scope="col">Peony Pattern</th>
-  </tr>
-  <tr>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/#white-sands"><img src="assets/previews/white-sands.webp" width="800" alt="White Sands"></a></td>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/#peonies"><img src="assets/previews/peonies.webp" width="800" alt="Peony Pattern"></a></td>
-  </tr>
-  <tr>
-    <th width="50%" scope="col">Glass Valley</th>
-    <th width="50%" scope="col">Quiet Ascent</th>
-  </tr>
-  <tr>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/#glass-valley"><img src="assets/previews/glass-valley.webp" width="800" alt="Glass Valley"></a></td>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/#quiet-ascent"><img src="assets/previews/quiet-ascent.webp" width="800" alt="Quiet Ascent"></a></td>
-  </tr>
-  <tr>
-    <th width="50%" scope="col">Stillwater</th>
-    <th width="50%" scope="col">Journey</th>
-  </tr>
-  <tr>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/#stillwater"><img src="assets/previews/stillwater.webp" width="800" alt="Stillwater"></a></td>
-    <td width="50%"><a href="https://ambient-worlds.pages.dev/#journey"><img src="assets/previews/journey.webp" width="800" alt="Journey"></a></td>
-  </tr>
+  <tr><th width="50%" scope="col">White Sands</th><th width="50%" scope="col">Glass Valley</th></tr>
+  <tr><td width="50%"><a href="https://ambient-worlds.pages.dev/#white-sands"><img src="assets/previews/white-sands.webp" width="800" alt="White Sands"></a></td><td width="50%"><a href="https://ambient-worlds.pages.dev/#glass-valley"><img src="assets/previews/glass-valley.webp" width="800" alt="Glass Valley"></a></td></tr>
+  <tr><th width="50%" scope="col">Quiet Ascent</th><th width="50%" scope="col">Stillwater</th></tr>
+  <tr><td width="50%"><a href="https://ambient-worlds.pages.dev/#quiet-ascent"><img src="assets/previews/quiet-ascent.webp" width="800" alt="Quiet Ascent"></a></td><td width="50%"><a href="https://ambient-worlds.pages.dev/#stillwater"><img src="assets/previews/stillwater.webp" width="800" alt="Stillwater"></a></td></tr>
+  <tr><th width="50%" scope="col">Journey</th><td></td></tr>
+  <tr><td width="50%"><a href="https://ambient-worlds.pages.dev/#journey"><img src="assets/previews/journey.webp" width="800" alt="Journey"></a></td><td></td></tr>
 </table>
 
 ---

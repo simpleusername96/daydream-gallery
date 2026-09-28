@@ -1,5 +1,15 @@
 {
   "version": 1,
-  "include": ["/AGENTS.md", "/.agents/*", "/docs/*"],
+  "include": [
+    "/AGENTS.md",
+    "/.agents/*",
+    "/docs/*",
+    "/worlds/peonies*",
+    "/worlds/ink-cascade*",
+    "/assets/previews/peonies*",
+    "/assets/previews/ink-cascade*",
+    "/assets/runtime/peonies/*",
+    "/assets/runtime/ink-cascade/*"
+  ],
   "exclude": []
 }
