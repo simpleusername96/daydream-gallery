@@ -6,7 +6,7 @@ Ambient Worlds is made through human art direction and selection with GPT-based 
 
 ## Experience
 
-- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Choose from six worlds, switch scenes, pause playback, or listen with optional sound.
+- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Choose from five worlds, switch scenes, pause playback, or listen with optional sound.
 
 ## Available worlds
 
@@ -15,7 +15,6 @@ Ambient Worlds is made through human art direction and selection with GPT-based 
 
 - Glass Valley: Travel through a stained-glass mountain valley.
 - Quiet Ascent: A rocket rises through a dark, slowly changing sky.
-- Peony Pattern: An eightfold kaleidoscope automatically moving between purple peonies, red peonies and blue rocks from a Korean painted screen.
 - White Sands: A small tree and one red apple above white dunes, with intermittent wind.
 
 ## Source
