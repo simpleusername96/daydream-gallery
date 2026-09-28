@@ -29,13 +29,20 @@ function setStatus(message, persistent = false, durationMs = 2400, instruction =
   status.classList.toggle("instruction", instruction);
   if (message && !persistent) state.statusTimer = setTimeout(() => { status.textContent = ""; status.classList.remove("visible"); }, durationMs);
 }
+function scheduleChrome() {
+  clearTimeout(state.idleTimer);
+  if (state.home || document.body.classList.contains('chromeHidden')) return;
+  state.idleTimer = setTimeout(() => {
+    if (!navigation.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover, .chrome details[open]')) hideChrome();
+  }, 3000);
+}
 function showChrome() {
-  document.body.classList.remove("chromeHidden"); clearTimeout(state.idleTimer);
-  state.idleTimer = setTimeout(() => { if (!state.home && !navigation.open && state.ready && !state.busy && !state.failed && !document.querySelector(".chrome:focus-visible, .chrome :focus-visible, .chrome details[open]")) document.body.classList.add("chromeHidden"); }, 2600);
+  document.body.classList.remove('chromeHidden'); scheduleChrome();
 }
 function hideChrome() {
   clearTimeout(state.idleTimer);
   document.activeElement?.blur?.();
+  document.querySelector("#aboutPanel details").open = false;
   document.body.classList.add("chromeHidden");
 }
 function updateSelection() {
@@ -46,10 +53,9 @@ function updateControls() {
   playPause.setAttribute("aria-pressed", String(!state.playing));
   playPause.setAttribute("aria-label", state.playing ? "정지" : "재생");
   playPause.title = state.playing ? "정지" : "재생"; playPause.classList.toggle("paused", !state.playing);
-  const hasMusic = activeWorld().music !== false;
-  sound.disabled = !hasMusic;
-  sound.setAttribute("aria-pressed", String(hasMusic && !state.muted)); sound.classList.toggle("soundEnabled", hasMusic && !state.muted);
-  sound.title = !hasMusic ? "이 장면에는 소리가 없습니다" : state.muted ? "소리 켜기" : "소리 끄기"; sound.setAttribute("aria-label", sound.title);
+  sound.disabled = !music.available;
+  sound.setAttribute("aria-pressed", String(!state.muted)); sound.classList.toggle("soundEnabled", !state.muted);
+  sound.title = !music.available ? "음악 준비 중" : state.muted ? "소리 켜기" : "소리 끄기"; sound.setAttribute("aria-label", sound.title);
   random.disabled = !state.ready || state.busy || !state.capabilities.scenes;
   $("stage").setAttribute("aria-busy", String(!state.ready || state.busy));
 }
@@ -81,7 +87,7 @@ function clearLoading() {
   notice.hidden = true; retry.hidden = true; notice.classList.remove("failed"); state.failed = false;
 }
 function beginLoading() {
-  clearLoading(); setStatus(""); showChrome();
+  clearLoading(); setStatus("");
   loadingText.textContent = "장면 준비 중";
   notice.hidden = false;
   state.slowTimer = setTimeout(() => { loadingText.textContent = "장면을 준비하고 있습니다. 잠시만 기다려 주세요."; }, 8000);
@@ -92,7 +98,7 @@ function failLoading() {
   if (!state.frame?.classList.contains("ready")) { retireFrame(state.frame); state.frame = null; }
   notice.hidden = false; retry.hidden = false; notice.classList.add("failed");
   loadingText.textContent = "장면을 불러오지 못했습니다.";
-  updateControls(); showChrome();
+  updateControls();
 }
 // Allow pending UI to paint before synchronous source work. Tokens cancel stale choices.
 function afterPaint(token, action) {
@@ -104,7 +110,7 @@ function finishReady(capabilities) {
   state.ready = true; state.busy = false; state.capabilities = capabilities;
   if (first) clock.resetWorld();
   state.lastTransitionMs = performance.now() - state.transitionStart;
-  syncWorldState(); updateControls();
+  syncWorldState(); updateControls(); scheduleChrome();
   state.frame?.classList.add("ready");
   retireFrame(state.previousFrame); state.previousFrame = null;
   const token = state.mountToken;
@@ -200,13 +206,14 @@ function audioError() {
   setStatus("소리를 시작하지 못했습니다. 소리 버튼을 다시 눌러 주세요.");
 }
 function toggleSound() {
-  if (activeWorld().music === false) return;
+  if (!music.available) return;
   state.muted = !state.muted; updateControls(); showChrome();
   music.setMuted(state.muted).catch(audioError);
 }
-function handleShortcut(key) {
+function handleShortcut(key, fromFrame = false) {
   key = key.toLowerCase();
-  if (navigation.open) return;
+  if (navigation.open || ![' ','r','m','f','escape','tab'].includes(key) && !/^[1-9]$/.test(key)) return;
+  if (key === 'tab') { if (!state.home) { showChrome(); if (fromFrame) $('goHome').focus({ preventScroll:true }); } return; }
   if (state.home) { if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]); return; }
   if (key === "f") hideChrome();
   else if (key === "escape") hideChrome();
@@ -235,17 +242,37 @@ window.addEventListener("message", event => {
   if (message.type === "error") failLoading();
   if (message.type === "loading") { state.busy = true; updateControls(); }
   if (message.type === "status") setStatus(message.message, Boolean(message.persistent));
-  if (message.type === "shortcut" && typeof message.key === "string") handleShortcut(message.key);
-  if (message.type === "activity") showChrome();
+  if (message.type === "shortcut" && typeof message.key === "string") handleShortcut(message.key, true);
+  if (message.type === "activity" && message.intent === "activate") showChrome();
 });
 window.addEventListener("keydown", event => {
-  if (event.target.closest?.(".analytics-consent, .analytics-settings") || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
+  if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.target.closest?.(".analytics-consent, .analytics-settings") || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
   if (event.target.tagName === "BUTTON" && [" ","Enter"].includes(event.key)) return;
   const key = event.key.toLowerCase();
   if ([" ","r"].includes(key)) event.preventDefault();
   handleShortcut(key);
 });
-for (const event of ["pointermove","pointerdown","focusin"]) window.addEventListener(event, showChrome, { passive:true });
+// Movement, focus restoration and renderer notifications never wake hidden chrome.
+let revealPointer = null;
+window.addEventListener('pointerdown', event => {
+  if (event.isTrusted) revealPointer = { x:event.clientX, y:event.clientY, moved:false };
+}, { capture:true, passive:true });
+window.addEventListener('pointermove', event => {
+  if (revealPointer && Math.hypot(event.clientX-revealPointer.x,event.clientY-revealPointer.y)>8) revealPointer.moved=true;
+  if (!document.body.classList.contains('chromeHidden') && event.target.closest?.('.chrome')) scheduleChrome();
+}, { passive:true });
+window.addEventListener('pointercancel', () => { revealPointer=null; }, { passive:true });
+window.addEventListener('click', event => {
+  if (!event.isTrusted || state.home || navigation.open) return;
+  const moved = revealPointer?.moved; revealPointer=null;
+  if (moved) return;
+  if (document.body.classList.contains('chromeHidden')) {
+    showChrome();
+    if (!event.target.closest?.('#loadingNotice, .analytics-consent, .analytics-settings')) { event.preventDefault(); event.stopImmediatePropagation(); }
+  } else scheduleChrome();
+}, true);
+for (const event of ['focusin','focusout','pointerout']) window.addEventListener(event, scheduleChrome, { passive:true });
+document.querySelector('#aboutPanel details').addEventListener('toggle', scheduleChrome);
 let lastTick = performance.now();
 const timer = setInterval(() => {
   const now = performance.now(), delta = now - lastTick; lastTick = now;
@@ -256,7 +283,6 @@ const timer = setInterval(() => {
     sceneDurationMs: state.capabilities.scenes ? activeWorld().sceneDurationMs : 0
   });
   if (action === "scene") changeScene("next-scene");
-  music.tick();
 }, 250);
 document.addEventListener("visibilitychange", () => { analyticsTime.flush(); lastTick = performance.now(); syncWorldState(); });
 reducedMotion.addEventListener("change", event => { if (event.matches) { state.playing = false; syncWorldState(); updateControls(); } });

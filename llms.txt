@@ -6,10 +6,11 @@ Ambient Worlds is made through human art direction and selection with GPT-based 
 
 ## Experience
 
-- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Choose from five worlds, switch scenes, pause playback, or listen with optional sound.
+- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Choose from six worlds, switch scenes, or pause playback.
 
 ## Available worlds
 
+- Paper Wings: Small butterflies fly independently over slowly changing hanji paper.
 - Journey: An isometric drive through changing coastal, desert, forest, and dusk landscapes.
 - Stillwater: A quiet pond where water, light, plants, leaves, and fish move together.
 

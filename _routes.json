@@ -9,7 +9,8 @@
     "/assets/previews/peonies*",
     "/assets/previews/ink-cascade*",
     "/assets/runtime/peonies/*",
-    "/assets/runtime/ink-cascade/*"
+    "/assets/runtime/ink-cascade/*",
+    "/assets/music/*"
   ],
   "exclude": []
 }

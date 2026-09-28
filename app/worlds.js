@@ -1,7 +1,22 @@
-// Reviewed public collection; development-only scenes stay private.
-export const WORLD_ORDER = ["white-sands","glass-valley","quiet-ascent","stillwater","journey"];
+// Reviewed public collection; newest publication first.
+export const WORLD_ORDER = ["paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
 
 export const WORLDS = Object.freeze({
+  "paper-wings": {
+    "id": "paper-wings",
+    "thumbnail": "assets/previews/paper-wings.webp",
+    "label": "Paper Wings",
+    "adapter": "worlds/paper-wings/adapter.html",
+    "fallbackImage": "assets/previews/paper-wings.webp",
+    "interactive": true,
+    "autoDurationMs": 0,
+    "sceneDurationMs": 0,
+    "defaultCapabilities": {
+      "play": true,
+      "sound": false,
+      "scenes": true
+    }
+  },
   "white-sands": {
     "id": "white-sands",
     "thumbnail": "assets/previews/white-sands.webp",
@@ -10,7 +25,6 @@ export const WORLDS = Object.freeze({
     "fallbackImage": "worlds/white-sands/art/pixel-master.png",
     "autoDurationMs": 0,
     "sceneDurationMs": 0,
-    "music": false,
     "defaultCapabilities": {
       "play": true,
       "sound": false,
@@ -25,7 +39,6 @@ export const WORLDS = Object.freeze({
     "interactive": true,
     "autoDurationMs": 0,
     "sceneDurationMs": 0,
-    "music": false,
     "defaultCapabilities": {
       "play": true,
       "sound": false,
@@ -39,7 +52,6 @@ export const WORLDS = Object.freeze({
     "adapter": "worlds/quiet-ascent/adapter.html",
     "autoDurationMs": 0,
     "sceneDurationMs": 0,
-    "music": false,
     "defaultCapabilities": {
       "play": true,
       "sound": false,

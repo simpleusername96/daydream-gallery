@@ -37,18 +37,9 @@ connectWorld({
       if (sourceError.classList.contains("open")) reportError();
     }
     doc.querySelector("canvas#world")?.addEventListener("webglcontextlost", reportError, { once:true });
-    let lastActivity = 0;
-    const reportActivity = () => {
-      const now = performance.now();
-      if (now - lastActivity < 100) return;
-      lastActivity = now;
-      parent.postMessage({ source:"ambient-world",world:"glass-valley",type:"activity" }, location.origin);
-    };
-    doc.addEventListener("pointermove", reportActivity, { passive:true });
-    doc.addEventListener("pointerdown", reportActivity, { passive:true });
     const shortcuts = new Map([[" "," "],["p"," "],["r","r"],["m","m"],["f","f"],["h","f"],["escape","escape"]]);
     doc.addEventListener("keydown", event => {
-      if (event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+      if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
       const key = event.key.toLowerCase();
       const action = shortcuts.get(key) ?? (/^[1-9]$/.test(key) ? key : null);
       if (!action) return;

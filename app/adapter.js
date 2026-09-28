@@ -2,6 +2,16 @@
 export function connectWorld({ world, frame, resolve, prepare = () => {}, timeoutMs = 20000, scenes = true }) {
   let ready = false, playing = null, timer = 0, deadline = performance.now() + timeoutMs, disposed = false;
   const notify = (type, detail = {}) => parent.postMessage({ source: "ambient-world", world, type, ...detail }, location.origin === "null" ? "*" : location.origin);
+  const inputDocuments = new WeakSet();
+  function prepareInput(doc) {
+    if (!doc || inputDocuments.has(doc)) return;
+    inputDocuments.add(doc); let pointer = null;
+    doc.addEventListener("pointerdown", e => { if(e.isTrusted) pointer={x:e.clientX,y:e.clientY,moved:false}; }, {capture:true,passive:true});
+    doc.addEventListener("pointermove", e => { if(pointer&&Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y)>8) pointer.moved=true; }, {passive:true});
+    doc.addEventListener("pointercancel", () => { pointer=null; }, {passive:true});
+    doc.addEventListener("click", e => { const moved=pointer?.moved; pointer=null; if(e.isTrusted&&!moved) notify("activity",{intent:"activate"}); }, true);
+    doc.addEventListener("keydown", e => { if(e.isTrusted&&e.key==="Tab"&&!e.ctrlKey&&!e.altKey&&!e.metaKey) { e.preventDefault(); notify("shortcut",{key:"Tab"}); } });
+  }
   const capabilities = { play: true, sound: false, scenes };
   function poll() {
     clearTimeout(timer);
@@ -10,7 +20,7 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
       const source = resolve();
       if (source?.ready) {
         if (playing !== null) source.player.setPlaying(playing);
-        prepare(frame.contentDocument);
+        prepare(frame.contentDocument); prepareInput(frame.contentDocument);
         ready = true;
         notify("ready", { capabilities });
         return;

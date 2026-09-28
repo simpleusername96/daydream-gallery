@@ -4,7 +4,7 @@ These notices apply to the listed components. They do not license Ambient Worlds
 
 ## Third-party components
 
-- **three.js 0.180.0** — MIT License. Embedded in Stillwater. See [LICENSES/THREE.txt](LICENSES/THREE.txt).
+- **three.js 0.180.0** — MIT License. Used by Stillwater and Paper Wings. See [LICENSES/THREE.txt](LICENSES/THREE.txt).
 - **Quaternius — Ultimate Nature Pack** — CC0 1.0. Selected visual assets are embedded in Journey.
 - **Kenney — Nature Kit** — CC0 1.0. Selected visual assets are embedded in Journey.
 
