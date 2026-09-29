@@ -1,19 +1,19 @@
-# Ambient Worlds
+# Daydream Gallery
 
-**[라이브 사이트 보기 · Open live site](https://ambient-worlds.pages.dev/)**
+**[라이브 사이트 보기 · Open live site](https://daydream-gallery.pages.dev/)**
 
 [한국어](#한국어) · [English](#english)
 
 <!-- docs:gallery:start -->
 <table>
   <tr><th colspan="2" scope="col">ASCII Bloom</th></tr>
-  <tr><td colspan="2"><a href="https://ambient-worlds.pages.dev/#ascii-bloom"><img src="assets/previews/ascii-bloom.webp" width="800" alt="ASCII Bloom"></a></td></tr>
+  <tr><td colspan="2"><a href="https://daydream-gallery.pages.dev/#ascii-bloom"><img src="assets/previews/ascii-bloom.webp" width="800" alt="ASCII Bloom"></a></td></tr>
   <tr><th width="50%" scope="col">Paper Wings</th><th width="50%" scope="col">White Sands</th></tr>
-  <tr><td width="50%"><a href="https://ambient-worlds.pages.dev/#paper-wings"><img src="assets/previews/paper-wings.webp" width="800" alt="Paper Wings"></a></td><td width="50%"><a href="https://ambient-worlds.pages.dev/#white-sands"><img src="assets/previews/white-sands.webp" width="800" alt="White Sands"></a></td></tr>
+  <tr><td width="50%"><a href="https://daydream-gallery.pages.dev/#paper-wings"><img src="assets/previews/paper-wings.webp" width="800" alt="Paper Wings"></a></td><td width="50%"><a href="https://daydream-gallery.pages.dev/#white-sands"><img src="assets/previews/white-sands.webp" width="800" alt="White Sands"></a></td></tr>
   <tr><th width="50%" scope="col">Glass Valley</th><th width="50%" scope="col">Quiet Ascent</th></tr>
-  <tr><td width="50%"><a href="https://ambient-worlds.pages.dev/#glass-valley"><img src="assets/previews/glass-valley.webp" width="800" alt="Glass Valley"></a></td><td width="50%"><a href="https://ambient-worlds.pages.dev/#quiet-ascent"><img src="assets/previews/quiet-ascent.webp" width="800" alt="Quiet Ascent"></a></td></tr>
+  <tr><td width="50%"><a href="https://daydream-gallery.pages.dev/#glass-valley"><img src="assets/previews/glass-valley.webp" width="800" alt="Glass Valley"></a></td><td width="50%"><a href="https://daydream-gallery.pages.dev/#quiet-ascent"><img src="assets/previews/quiet-ascent.webp" width="800" alt="Quiet Ascent"></a></td></tr>
   <tr><th width="50%" scope="col">Stillwater</th><th width="50%" scope="col">Journey</th></tr>
-  <tr><td width="50%"><a href="https://ambient-worlds.pages.dev/#stillwater"><img src="assets/previews/stillwater.webp" width="800" alt="Stillwater"></a></td><td width="50%"><a href="https://ambient-worlds.pages.dev/#journey"><img src="assets/previews/journey.webp" width="800" alt="Journey"></a></td></tr>
+  <tr><td width="50%"><a href="https://daydream-gallery.pages.dev/#stillwater"><img src="assets/previews/stillwater.webp" width="800" alt="Stillwater"></a></td><td width="50%"><a href="https://daydream-gallery.pages.dev/#journey"><img src="assets/previews/journey.webp" width="800" alt="Journey"></a></td></tr>
 </table>
 <!-- docs:gallery:end -->
 
@@ -21,9 +21,9 @@
 
 ## 한국어
 
-> 평화로운 풍경을 감상할 수 있는 비주얼 플레이어입니다.
+> 만들고 싶은 장면을 만들어 모아두는 개인 갤러리입니다.
 
-명상, 집중, 휴식 또는 조용한 배경이 필요할 때 재생해 보세요.
+마음에 드는 작품을 골라 감상해 보세요.
 
 사람의 아트 디렉션과 선택을 바탕으로 GPT와 협업을 통해 만들었습니다.
 
@@ -45,9 +45,9 @@ ASCII Bloom에서는 하단에서 모양과 색을 고른 뒤 화면을 클릭�
 
 ## English
 
-> A visual player for peaceful landscapes.
+> A personal gallery of things I wanted to make.
 
-Play it for meditation, focus, rest, or a quiet background.
+Choose a piece and spend some time with it.
 
 Made in collaboration with GPT, guided by human art direction and selection.
 

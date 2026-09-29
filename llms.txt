@@ -1,12 +1,12 @@
-# Ambient Worlds
+# Daydream Gallery
 
-> A browser player for procedural landscapes and interactive visual art.
+> A personal gallery of animated scenes and interactive art.
 
 Made through human art direction and selection with GPT coding assistance. The runtime is browser code, not an AI generation service.
 
 ## Experience
 
-Choose from 7 scenes at [Ambient Worlds](https://ambient-worlds.pages.dev/).
+Choose from 7 scenes at [Daydream Gallery](https://daydream-gallery.pages.dev/).
 
 Choose an image on the home screen to open a scene. Use the home icon to return or the image-list icon to select another scene. The bottom controls offer a new scene, play/pause, sound and a view without controls.
 
@@ -18,14 +18,14 @@ In ASCII Bloom, choose a shape and color in the bottom bar, then click or tap th
 
 ## Available scenes
 
-- [ASCII Bloom](https://ambient-worlds.pages.dev/#ascii-bloom): Choose a shape and color, then click or tap to send a wave through a field of characters.
-- [Paper Wings](https://ambient-worlds.pages.dev/#paper-wings): Seventeen butterfly families fly independently over hanji paper.
-- [White Sands](https://ambient-worlds.pages.dev/#white-sands): A small tree and one red apple above white dunes, with intermittent wind.
-- [Glass Valley](https://ambient-worlds.pages.dev/#glass-valley): Travel through a stained-glass mountain valley. Drag to look around.
-- [Quiet Ascent](https://ambient-worlds.pages.dev/#quiet-ascent): A small rocket rises through stars, drifting gas and occasional planets.
-- [Stillwater](https://ambient-worlds.pages.dev/#stillwater): Water, plants, fish, clouds and falling leaves move through a quiet pond.
-- [Journey](https://ambient-worlds.pages.dev/#journey): An isometric drive through coastal, desert and forest landscapes.
+- [ASCII Bloom](https://daydream-gallery.pages.dev/#ascii-bloom): Choose a shape and color, then click or tap to send a wave through a field of characters.
+- [Paper Wings](https://daydream-gallery.pages.dev/#paper-wings): Seventeen butterfly families fly independently over hanji paper.
+- [White Sands](https://daydream-gallery.pages.dev/#white-sands): A small tree and one red apple above white dunes, with intermittent wind.
+- [Glass Valley](https://daydream-gallery.pages.dev/#glass-valley): Travel through a stained-glass mountain valley. Drag to look around.
+- [Quiet Ascent](https://daydream-gallery.pages.dev/#quiet-ascent): A small rocket rises through stars, drifting gas and occasional planets.
+- [Stillwater](https://daydream-gallery.pages.dev/#stillwater): Water, plants, fish, clouds and falling leaves move through a quiet pond.
+- [Journey](https://daydream-gallery.pages.dev/#journey): An isometric drive through coastal, desert and forest landscapes.
 
 ## Source
 
-- [Public source code](https://github.com/simpleusername96/ambient-worlds-site): Generated reviewed runtime, documentation, notices and licenses.
+- [Public source code](https://github.com/simpleusername96/daydream-gallery): Generated reviewed runtime, documentation, notices and licenses.

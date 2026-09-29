@@ -1,6 +1,6 @@
 # Third-party notices
 
-These notices apply to the listed components. They do not license Ambient Worlds as a whole.
+These notices apply to the listed components. They do not license Daydream Gallery as a whole.
 
 ## Third-party components
 
