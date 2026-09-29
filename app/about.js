@@ -60,6 +60,22 @@ function updateArtworkCredit(worldId = currentWorldId) {
 }
 
 const supportedLanguage = value => value === "ko" || value === "en";
+const LANGUAGE_KEY = "daydream-gallery-language";
+const LEGACY_LANGUAGE_KEY = "ambient-worlds-language";
+
+export function readStoredLanguage(storage) {
+  let language = "";
+  try {
+    language = storage.getItem(LANGUAGE_KEY);
+    if (supportedLanguage(language)) return language;
+    language = storage.getItem(LEGACY_LANGUAGE_KEY);
+    if (supportedLanguage(language)) {
+      storage.setItem(LANGUAGE_KEY, language);
+      storage.removeItem(LEGACY_LANGUAGE_KEY);
+    }
+  } catch { /* Preserve a readable preference even when writes are blocked. */ }
+  return supportedLanguage(language) ? language : "";
+}
 
 export function chooseLanguage({ queryLanguage, storedLanguage, languages = [], timeZone = "" } = {}) {
   if (supportedLanguage(queryLanguage)) return queryLanguage;
@@ -104,14 +120,14 @@ function applyLanguage(language, persist = false) {
   updateArtworkCredit();
 
   if (persist) {
-    try { localStorage.setItem("ambient-worlds-language", language); } catch { /* Preference remains session-only. */ }
+    try { localStorage.setItem(LANGUAGE_KEY, language); localStorage.removeItem(LEGACY_LANGUAGE_KEY); } catch { /* Preference remains session-only. */ }
   }
 }
 
 function initializeLanguage() {
   let storedLanguage = "";
   let timeZone = "";
-  try { storedLanguage = localStorage.getItem("ambient-worlds-language") || ""; } catch { /* Use locale detection. */ }
+  try { storedLanguage = readStoredLanguage(localStorage); } catch { /* Use locale detection. */ }
   try { timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { /* Use browser language. */ }
   const language = chooseLanguage({
     queryLanguage: new URLSearchParams(location.search).get("lang") || "",
@@ -127,5 +143,5 @@ function initializeLanguage() {
 
 if (typeof document !== "undefined") {
   initializeLanguage();
-  window.addEventListener("ambient-world-change", event => updateArtworkCredit(event.detail.world));
+  window.addEventListener("daydream-gallery-world-change", event => updateArtworkCredit(event.detail.world));
 }

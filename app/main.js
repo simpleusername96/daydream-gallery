@@ -54,7 +54,7 @@ function hideChrome() {
 }
 function updateSelection() {
   navigation.showWorld(activeWorld().id);
-  window.dispatchEvent(new CustomEvent("ambient-world-change", { detail: { world: activeWorld().id } }));
+  window.dispatchEvent(new CustomEvent("daydream-gallery-world-change", { detail: { world: activeWorld().id } }));
 }
 function updateControls() {
   let brush = null;
@@ -71,7 +71,7 @@ function updateControls() {
   random.disabled = !state.ready || state.busy || !state.capabilities.scenes;
   $("stage").setAttribute("aria-busy", String(!state.ready || state.busy));
 }
-function bridge(frame = state.frame) { try { return frame?.contentWindow?.ambientWorld ?? null; } catch { return null; } }
+function bridge(frame = state.frame) { try { return frame?.contentWindow?.daydreamWorld ?? null; } catch { return null; } }
 function retireFrame(frame) {
   try { bridge(frame)?.destroy?.(); } catch { /* The source may already be gone. */ }
   frame?.remove();
@@ -81,7 +81,7 @@ function sendControl(action, value) {
   const direct = bridge();
   if (typeof direct?.[method] === "function") return direct[method](value);
   if (!state.frame?.contentWindow) return false;
-  state.frame.contentWindow.postMessage({ source:"ambient-worlds",type:"control",action,value }, location.origin === "null" ? "*" : location.origin);
+  state.frame.contentWindow.postMessage({ source:"daydream-gallery",type:"control",action,value }, location.origin === "null" ? "*" : location.origin);
   return true;
 }
 function syncWorldState() {
@@ -244,7 +244,7 @@ $("focusView").addEventListener("click", hideChrome);
 window.addEventListener("message", event => {
   if (event.source !== state.frame?.contentWindow) return;
   const message = event.data;
-  if (message?.source !== "ambient-world" || message.world !== activeWorld().id) return;
+  if (message?.source !== "daydream-gallery-world" || message.world !== activeWorld().id) return;
   if (message.type === "ready") {
     finishReady(message.capabilities);
     if (activeWorld().id === "glass-valley" && !state.glassValleyHintShown) {
@@ -302,7 +302,7 @@ document.addEventListener("visibilitychange", () => { analyticsTime.flush(); las
 reducedMotion.addEventListener("change", event => { if (event.matches) { state.playing = false; syncWorldState(); updateControls(); } });
 window.addEventListener("pagehide", () => { analyticsTime.flush(); clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); retireFrame(state.frame); retireFrame(state.previousFrame); music.dispose(); }, { once:true });
 // Read-only diagnostics for actual-browser checks; no authoring surface.
-window.ambientPlayer = Object.freeze({ snapshot: () => ({ view:state.home ? "home" : "player", world:state.home ? null : activeWorld().id, menuOpen:navigation.open, mode:"fixed", playing:state.playing, muted:state.muted,
+window.daydreamPlayer = Object.freeze({ snapshot: () => ({ view:state.home ? "home" : "player", world:state.home ? null : activeWorld().id, menuOpen:navigation.open, mode:"fixed", playing:state.playing, muted:state.muted,
   ready:state.ready, busy:state.busy, failed:state.failed, worldMs:clock.worldMs, sceneMs:clock.sceneMs,
   lastTransitionMs:state.lastTransitionMs, frameCount:worldSlot.querySelectorAll("iframe").length, music:music.snapshot() }) });
 applyRoute();

@@ -29,7 +29,7 @@ connectWorld({
     const style = doc.createElement("style"); style.id = "ambientSourceUI";
     style.textContent = "html,body,canvas{user-select:none!important;-webkit-user-select:none!important}.ui,.popover,#restore,#loader,#error,#toast,#flash,#veil{display:none!important}";
     doc.head.append(style);
-    const reportError = () => parent.postMessage({ source:"ambient-world",world:"glass-valley",type:"error" }, location.origin);
+    const reportError = () => parent.postMessage({ source:"daydream-gallery-world",world:"glass-valley",type:"error" }, location.origin);
     const sourceError = doc.querySelector("#error");
     if (sourceError) {
       new MutationObserver(() => { if (sourceError.classList.contains("open")) reportError(); })
@@ -44,7 +44,7 @@ connectWorld({
       const action = shortcuts.get(key) ?? (/^[1-9]$/.test(key) ? key : null);
       if (!action) return;
       event.preventDefault(); event.stopImmediatePropagation();
-      parent.postMessage({ source:"ambient-world",world:"glass-valley",type:"shortcut",key:action }, location.origin);
+      parent.postMessage({ source:"daydream-gallery-world",world:"glass-valley",type:"shortcut",key:action }, location.origin);
     }, true);
   }
 });

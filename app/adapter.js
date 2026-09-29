@@ -1,7 +1,7 @@
 // Shared protocol/lifetime only; each adapter selects its source-specific player.
 export function connectWorld({ world, frame, resolve, prepare = () => {}, timeoutMs = 20000, scenes = true, brush = false }) {
   let ready = false, playing = null, timer = 0, deadline = performance.now() + timeoutMs, disposed = false;
-  const notify = (type, detail = {}) => parent.postMessage({ source: "ambient-world", world, type, ...detail }, location.origin === "null" ? "*" : location.origin);
+  const notify = (type, detail = {}) => parent.postMessage({ source: "daydream-gallery-world", world, type, ...detail }, location.origin === "null" ? "*" : location.origin);
   const inputDocuments = new WeakSet();
   function prepareInput(doc) {
     if (!doc || inputDocuments.has(doc)) return;
@@ -48,7 +48,7 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
       return false;
     }
   }
-  window.ambientWorld = Object.freeze({
+  window.daydreamWorld = Object.freeze({
     get ready() { return ready; },
     setPlaying(value) {
       if (disposed) return false;
@@ -83,11 +83,11 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
   window.addEventListener("message", event => {
     if (event.source !== parent) return;
     const m = event.data;
-    if (m?.source !== "ambient-worlds" || m.type !== "control") return;
+    if (m?.source !== "daydream-gallery" || m.type !== "control") return;
     const method = { "set-playing": "setPlaying", "set-muted": "setMuted", "random-scene": "randomScene", "next-scene": "nextScene", "previous-scene": "previousScene", "set-brush": "setBrush" }[m.action];
-    if (method) window.ambientWorld[method](m.value);
+    if (method) window.daydreamWorld[method](m.value);
   });
   frame.addEventListener("load", () => { try { prepare(frame.contentDocument); } catch {} poll(); });
-  window.addEventListener("pagehide", () => window.ambientWorld.destroy(), { once: true });
+  window.addEventListener("pagehide", () => window.daydreamWorld.destroy(), { once: true });
   poll();
 }

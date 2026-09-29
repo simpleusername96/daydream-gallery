@@ -16,7 +16,7 @@ connectWorld({
       const key = event.key.toLowerCase();
       if (![' ', 'r', 'm', 'f', 'escape'].includes(key) && !/^[1-9]$/.test(key)) return;
       event.preventDefault();
-      parent.postMessage({ source: 'ambient-world', world: 'ascii-bloom', type: 'shortcut', key }, location.origin === 'null' ? '*' : location.origin);
+      parent.postMessage({ source: 'daydream-gallery-world', world: 'ascii-bloom', type: 'shortcut', key }, location.origin === 'null' ? '*' : location.origin);
     });
   }
 });
