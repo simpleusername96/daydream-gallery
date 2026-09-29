@@ -1,23 +1,31 @@
 # Ambient Worlds
 
-> A free browser player for endlessly changing, peaceful procedural landscapes.
+> A browser player for procedural landscapes and interactive visual art.
 
-Ambient Worlds is made through human art direction and selection with GPT-based AI coding assistance. The runtime itself is deterministic browser code, not an AI generation service.
+Made through human art direction and selection with GPT coding assistance. The runtime is browser code, not an AI generation service.
 
 ## Experience
 
-- [Open Ambient Worlds](https://ambient-worlds.pages.dev/): Choose from six worlds, switch scenes, or pause playback.
+Choose from 7 scenes at [Ambient Worlds](https://ambient-worlds.pages.dev/).
 
-## Available worlds
+Choose an image on the home screen to open a scene. Use the home icon to return or the image-list icon to select another scene. The bottom controls offer a new scene, play/pause, sound and a view without controls.
 
-- Paper Wings: Small butterflies fly independently over slowly changing hanji paper.
-- Journey: An isometric drive through changing coastal, desert, forest, and dusk landscapes.
-- Stillwater: A quiet pond where water, light, plants, leaves, and fish move together.
+Sound starts muted. Press the speaker button or M to play the same 32-second BGM loop in every scene. Switching scenes keeps the playback position. Pause, mute, returning home or hiding the tab pauses the music; resuming continues from that position.
 
-- Glass Valley: Travel through a stained-glass mountain valley.
-- Quiet Ascent: A rocket rises through a dark, slowly changing sky.
-- White Sands: A small tree and one red apple above white dunes, with intermittent wind.
+Space toggles playback, R creates a new scene, M toggles sound, and F or Esc hides the controls. Number keys select scenes in menu order. Controls hide after three idle seconds. Click, tap, Tab or a supported shortcut reveals them; pointer movement alone does not.
+
+In ASCII Bloom, choose a shape and color in the bottom bar, then click or tap the scene. In the scene picker, use arrow keys to move, Enter to select and Esc to close. Scene links support reload and browser Back.
+
+## Available scenes
+
+- [ASCII Bloom](https://ambient-worlds.pages.dev/#ascii-bloom): Choose a shape and color, then click or tap to send a wave through a field of characters.
+- [Paper Wings](https://ambient-worlds.pages.dev/#paper-wings): Seventeen butterfly families fly independently over hanji paper.
+- [White Sands](https://ambient-worlds.pages.dev/#white-sands): A small tree and one red apple above white dunes, with intermittent wind.
+- [Glass Valley](https://ambient-worlds.pages.dev/#glass-valley): Travel through a stained-glass mountain valley. Drag to look around.
+- [Quiet Ascent](https://ambient-worlds.pages.dev/#quiet-ascent): A small rocket rises through stars, drifting gas and occasional planets.
+- [Stillwater](https://ambient-worlds.pages.dev/#stillwater): Water, plants, fish, clouds and falling leaves move through a quiet pond.
+- [Journey](https://ambient-worlds.pages.dev/#journey): An isometric drive through coastal, desert and forest landscapes.
 
 ## Source
 
-- [Public source code](https://github.com/simpleusername96/ambient-worlds-site): The exact reviewed files published to the live site, with third-party notices and licenses.
+- [Public source code](https://github.com/simpleusername96/ambient-worlds-site): Generated reviewed runtime, documentation, notices and licenses.

@@ -10,6 +10,8 @@ These notices apply to the listed components. They do not license Ambient Worlds
 
 ## Original audio
 
+- **Shared BGM (`assets/audio/shared-loop.wav`)** — the repository-authored 32-second Journey score, used across all scenes. No third-party samples or recordings are used. The four prepared Flow Music tracks are not included in this distribution.
+
 - **Journey nature ambience** — original local synthesis dedicated to CC0 1.0; no third-party recordings, voices, melodies, or samples are used.
 
 CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/

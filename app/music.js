@@ -15,6 +15,7 @@ export class WorldMusic {
     this.audio = this.createAudio();
     this.audio.preload = "none";
     this.audio.volume = 0.65;
+    this.audio.loop = PLAYLIST[this.index].loop === true;
     this.audio.addEventListener("ended", this.onEnded);
     this.audio.addEventListener("error", this.onMediaError);
     this.audio.src = PLAYLIST[this.index].url;
@@ -24,6 +25,7 @@ export class WorldMusic {
     this.revision++;
     this.pending = null;
     this.index = (this.index + 1) % PLAYLIST.length;
+    this.audio.loop = PLAYLIST[this.index].loop === true;
     this.audio.src = PLAYLIST[this.index].url;
     void this.sync();
   };
