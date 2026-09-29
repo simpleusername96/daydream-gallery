@@ -2,7 +2,7 @@
 
 > A personal gallery of animated scenes and interactive art.
 
-Made through human art direction and selection with GPT coding assistance. The runtime is browser code, not an AI generation service.
+All scenes were developed with AI. The runtime is browser code, not an AI generation service.
 
 ## Experience
 
