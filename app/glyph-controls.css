@@ -1,0 +1,11 @@
+/* Only brush-capable worlds expose these two additions to the existing bottom bar. */
+.glyphControls { display:flex; align-items:center; gap:4px; padding-right:7px; margin-right:3px; border-right:1px solid #ffffff18; }
+.glyphControls[hidden], .glyphPicker[hidden] { display:none; }
+.glyphTrigger { color:var(--glyph-color); }
+.glyphTrigger > span:not(.glyphSwatch) { font:600 22px/1 ui-monospace,Consolas,"DejaVu Sans Mono","Segoe UI Symbol",monospace; }
+.glyphSwatch { display:block; width:15px; height:15px; border-radius:50%; background:var(--glyph-color); }
+.glyphPicker { position:absolute; left:50%; bottom:calc(100% + 12px); transform:translateX(-50%); display:grid; grid-template-columns:repeat(6,40px); gap:4px; padding:10px; width:max-content; max-width:calc(100vw - 20px); border:1px solid #ffffff20; border-radius:16px; background:rgba(28,30,34,.97); box-shadow:0 8px 28px #0003; }
+.glyphChoice { display:grid; place-items:center; width:40px; height:40px; padding:0; border:0; border-radius:9px; background:transparent; color:var(--glyph-color); cursor:pointer; font:600 21px/1 ui-monospace,Consolas,"DejaVu Sans Mono","Segoe UI Symbol",monospace; }
+.glyphChoice:hover, .glyphChoice[aria-pressed="true"], .glyphTrigger[aria-expanded="true"] { background:#ffffff13; }
+.glyphChoice:focus-visible, .glyphTrigger:focus-visible { outline:2px solid #c7ccd4; outline-offset:1px; }
+@media (max-width:480px) { #playerControls:has(.glyphControls:not([hidden])) { gap:3px; padding:7px; } .glyphControls { gap:2px; padding-right:4px; margin-right:1px; } #playerControls:has(.glyphControls:not([hidden])) > button, .glyphTrigger { width:40px; height:42px; min-width:40px; } }

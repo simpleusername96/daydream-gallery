@@ -5,6 +5,7 @@ import { WORLD_ORDER, WORLDS } from "./worlds.js";
 import { PlaybackClock } from "./playback.js";
 import { WorldMusic } from "./music.js";
 import { createNavigation } from "./navigation.js";
+import { createGlyphControls } from "./glyph-controls.js";
 
 const $ = id => document.getElementById(id);
 const worldSlot = $("worldSlot");
@@ -23,6 +24,11 @@ const state = {
 const navigation = createNavigation({ order: WORLD_ORDER, worlds: WORLDS, onSelect: selectWorld, onHome: () => navigate("home") });
 const notice = $("loadingNotice"), loadingText = $("loadingText"), retry = $("retryWorld");
 const activeWorld = () => WORLDS[WORLD_ORDER[state.index]];
+const glyphControls = createGlyphControls({ container: $("playerControls"),
+  onChange: value => { if (state.ready && !state.busy && state.capabilities.brush) { sendControl("set-brush", value); updateControls(); } },
+  onActivity: showChrome
+});
+window.addEventListener("pagehide", () => glyphControls.destroy(), { once: true });
 function setStatus(message, persistent = false, durationMs = 2400, instruction = false) {
   clearTimeout(state.statusTimer);
   status.textContent = message; status.classList.toggle("visible", Boolean(message));
@@ -33,13 +39,14 @@ function scheduleChrome() {
   clearTimeout(state.idleTimer);
   if (state.home || document.body.classList.contains('chromeHidden')) return;
   state.idleTimer = setTimeout(() => {
-    if (!navigation.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover, .chrome details[open]')) hideChrome();
+    if (!navigation.open && !glyphControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover, .chrome details[open]')) hideChrome();
   }, 3000);
 }
 function showChrome() {
   document.body.classList.remove('chromeHidden'); scheduleChrome();
 }
 function hideChrome() {
+  glyphControls.close();
   clearTimeout(state.idleTimer);
   document.activeElement?.blur?.();
   document.querySelector("#aboutPanel details").open = false;
@@ -50,6 +57,11 @@ function updateSelection() {
   window.dispatchEvent(new CustomEvent("ambient-world-change", { detail: { world: activeWorld().id } }));
 }
 function updateControls() {
+  let brush = null;
+  if (!state.home && state.ready && !state.busy && state.capabilities.brush) {
+    try { brush = bridge()?.getBrush?.(); } catch { /* The outgoing iframe may have unloaded. */ }
+  }
+  glyphControls.sync(brush);
   playPause.setAttribute("aria-pressed", String(!state.playing));
   playPause.setAttribute("aria-label", state.playing ? "정지" : "재생");
   playPause.title = state.playing ? "정지" : "재생"; playPause.classList.toggle("paused", !state.playing);
@@ -65,7 +77,7 @@ function retireFrame(frame) {
   frame?.remove();
 }
 function sendControl(action, value) {
-  const method = { "set-playing":"setPlaying", "set-muted":"setMuted", "random-scene":"randomScene", "next-scene":"nextScene", "previous-scene":"previousScene" }[action];
+  const method = { "set-brush":"setBrush", "set-playing":"setPlaying", "set-muted":"setMuted", "random-scene":"randomScene", "next-scene":"nextScene", "previous-scene":"previousScene" }[action];
   const direct = bridge();
   if (typeof direct?.[method] === "function") return direct[method](value);
   if (!state.frame?.contentWindow) return false;
@@ -182,7 +194,7 @@ function applyRoute(restoreFocus = false) {
   const previousId = activeWorld().id;
   analyticsTime.select(null);
   analytics.view();
-  state.home = true; ++state.mountToken;
+  state.home = true; ++state.mountToken; glyphControls.sync(null);
   clearLoading(); clearTimeout(state.idleTimer); setStatus('');
   retireFrame(state.frame); retireFrame(state.previousFrame);
   state.frame = null; state.previousFrame = null;
@@ -212,6 +224,7 @@ function toggleSound() {
 }
 function handleShortcut(key, fromFrame = false) {
   key = key.toLowerCase();
+  if (key === "escape" && glyphControls.open) { glyphControls.close(true); showChrome(); return; }
   if (navigation.open || ![' ','r','m','f','escape','tab'].includes(key) && !/^[1-9]$/.test(key)) return;
   if (key === 'tab') { if (!state.home) { showChrome(); if (fromFrame) $('goHome').focus({ preventScroll:true }); } return; }
   if (state.home) { if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]); return; }
@@ -239,11 +252,12 @@ window.addEventListener("message", event => {
       setStatus("화면을 드래그해 좌우로 둘러보세요", false, 8000, true);
     } else setStatus("");
   }
+  if (message.type === "brush") updateControls();
   if (message.type === "error") failLoading();
   if (message.type === "loading") { state.busy = true; updateControls(); }
   if (message.type === "status") setStatus(message.message, Boolean(message.persistent));
   if (message.type === "shortcut" && typeof message.key === "string") handleShortcut(message.key, true);
-  if (message.type === "activity" && message.intent === "activate") showChrome();
+  if (message.type === "activity" && message.intent === "activate") { glyphControls.close(); showChrome(); }
 });
 window.addEventListener("keydown", event => {
   if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.target.closest?.(".analytics-consent, .analytics-settings") || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;

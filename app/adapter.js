@@ -1,5 +1,5 @@
 // Shared protocol/lifetime only; each adapter selects its source-specific player.
-export function connectWorld({ world, frame, resolve, prepare = () => {}, timeoutMs = 20000, scenes = true }) {
+export function connectWorld({ world, frame, resolve, prepare = () => {}, timeoutMs = 20000, scenes = true, brush = false }) {
   let ready = false, playing = null, timer = 0, deadline = performance.now() + timeoutMs, disposed = false;
   const notify = (type, detail = {}) => parent.postMessage({ source: "ambient-world", world, type, ...detail }, location.origin === "null" ? "*" : location.origin);
   const inputDocuments = new WeakSet();
@@ -13,6 +13,7 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
     doc.addEventListener("keydown", e => { if(e.isTrusted&&e.key==="Tab"&&!e.ctrlKey&&!e.altKey&&!e.metaKey) { e.preventDefault(); notify("shortcut",{key:"Tab"}); } });
   }
   const capabilities = { play: true, sound: false, scenes };
+  if (brush) capabilities.brush = true;
   function poll() {
     clearTimeout(timer);
     if (disposed) return;
@@ -50,9 +51,21 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
   window.ambientWorld = Object.freeze({
     get ready() { return ready; },
     setPlaying(value) {
+      if (disposed) return false;
       playing = Boolean(value);
       if (ready) return resolve().player.setPlaying(playing);
       return false;
+    },
+    getBrush() { return !disposed && ready && brush ? resolve().player.getBrush() : null; },
+    setBrush(value) {
+      if (disposed || !ready || !brush || !value || typeof value !== "object") return false;
+      const next = {};
+      for (const key of ["kind", "tone"]) if (value[key] !== undefined) {
+        if (!Number.isInteger(value[key]) || value[key] < 1) return false;
+        next[key] = value[key];
+      }
+      if (!Object.keys(next).length || resolve().player.setBrush(next) === false) return false;
+      notify("brush", { brush: resolve().player.getBrush() }); return true;
     },
     // Shared music owns playback; source audio remains muted.
     setMuted() { return true; },
@@ -62,7 +75,7 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
     capture(target) { return ready ? resolve().player.drawTo(target) : false; },
     destroy() {
       if (disposed) return;
-      disposed = true;
+      disposed = true; ready = false;
       clearTimeout(timer);
       try { resolve()?.player?.destroy?.(); } catch { /* The source may already be unloading. */ }
     }
@@ -71,7 +84,7 @@ export function connectWorld({ world, frame, resolve, prepare = () => {}, timeou
     if (event.source !== parent) return;
     const m = event.data;
     if (m?.source !== "ambient-worlds" || m.type !== "control") return;
-    const method = { "set-playing": "setPlaying", "set-muted": "setMuted", "random-scene": "randomScene", "next-scene": "nextScene", "previous-scene": "previousScene" }[m.action];
+    const method = { "set-playing": "setPlaying", "set-muted": "setMuted", "random-scene": "randomScene", "next-scene": "nextScene", "previous-scene": "previousScene", "set-brush": "setBrush" }[m.action];
     if (method) window.ambientWorld[method](m.value);
   });
   frame.addEventListener("load", () => { try { prepare(frame.contentDocument); } catch {} poll(); });

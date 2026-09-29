@@ -1,7 +1,22 @@
 // Reviewed public collection; newest publication first.
-export const WORLD_ORDER = ["paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
+export const WORLD_ORDER = ["ascii-bloom","paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
 
 export const WORLDS = Object.freeze({
+  "ascii-bloom": {
+    "id": "ascii-bloom",
+    "thumbnail": "assets/previews/ascii-bloom.webp",
+    "label": "ASCII Bloom",
+    "adapter": "worlds/ascii-bloom/adapter.html",
+    "interactive": true,
+    "autoDurationMs": 0,
+    "sceneDurationMs": 0,
+    "defaultCapabilities": {
+      "play": true,
+      "sound": false,
+      "scenes": true,
+      "brush": true
+    }
+  },
   "paper-wings": {
     "id": "paper-wings",
     "thumbnail": "assets/previews/paper-wings.webp",

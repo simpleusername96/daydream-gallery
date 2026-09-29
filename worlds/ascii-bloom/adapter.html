@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ASCII Bloom adapter</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}iframe{position:fixed;inset:0;border:0;width:100%;height:100%}#error{display:none;color:#eee;padding:40px;font:14px system-ui}.failed #error{display:block}.failed iframe{display:none}</style></head>
+<body><iframe id="world" src="./player.html" title="ASCII Bloom"></iframe><div id="error">장면을 준비하지 못했습니다. 다시 선택해 주세요.</div>
+<script type="module">
+import { connectWorld } from '../../app/adapter.js';
+const frame = document.querySelector('#world'), prepared = new WeakSet();
+connectWorld({
+  world: 'ascii-bloom', frame, brush: true,
+  resolve() { const api = frame.contentWindow?.asciiBloom; return api ? { ready: api.ready, player: api.player } : null; },
+  prepare(doc) {
+    if (!doc || prepared.has(doc)) return;
+    prepared.add(doc);
+    doc.addEventListener('keydown', event => {
+      if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.repeat) return;
+      const key = event.key.toLowerCase();
+      if (![' ', 'r', 'm', 'f', 'escape'].includes(key) && !/^[1-9]$/.test(key)) return;
+      event.preventDefault();
+      parent.postMessage({ source: 'ambient-world', world: 'ascii-bloom', type: 'shortcut', key }, location.origin === 'null' ? '*' : location.origin);
+    });
+  }
+});
+</script></body></html>
