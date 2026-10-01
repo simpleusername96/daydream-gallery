@@ -8,11 +8,11 @@ All scenes were developed with AI. The runtime is browser code, not an AI genera
 
 Choose from 7 scenes at [Daydream Gallery](https://daydream-gallery.pages.dev/).
 
-Choose an image on the home screen to open a scene. Use the home icon to return or the image-list icon to select another scene. The bottom controls offer a new scene, play/pause, sound and a view without controls.
+Choose an image on the home screen to open a scene. Use the home icon to return or the image-list icon to select another scene. The bottom controls offer a new scene, global play/pause, a music panel and a view without controls.
 
-Sound starts muted. Press the speaker button or M to play the same 32-second BGM loop in every scene. Switching scenes keeps the playback position. Pause, mute, returning home or hiding the tab pauses the music; resuming continues from that position.
+Music starts with the first scene selection. Direct scene links wait for a scene click/tap. Explicit music pause is preserved across scene changes. Open the music-note panel to control playback. Skip tracks, edit order, shuffle, repeat one song and adjust volume. Playback shuffles six tracks once on entry; that order stays until explicitly edited. Scenes preserve track, volume and order. Music/global pause, home and hidden tabs suspend playback at its current position. The public site uses Journey and the five selected CC0 recordings in the same way.
 
-Space toggles playback, R creates a new scene, M toggles sound, and F or Esc hides the controls. Number keys select scenes in menu order. Controls hide after three idle seconds. Click, tap, Tab or a supported shortcut reveals them; pointer movement alone does not.
+Space toggles global playback, R creates a new scene, M toggles music playback, and F hides the controls. Esc closes an open panel first, otherwise hides controls. Number keys select scenes in menu order. Controls hide after three idle seconds. Click, tap, Tab or a supported shortcut reveals them; pointer movement alone does not.
 
 In ASCII Bloom, choose a shape and color in the bottom bar, then click or tap the scene. In the scene picker, use arrow keys to move, Enter to select and Esc to close. Scene links support reload and browser Back.
 

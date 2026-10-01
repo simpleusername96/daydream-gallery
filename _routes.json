@@ -12,5 +12,11 @@
     "/assets/runtime/ink-cascade/*",
     "/assets/music/*"
   ],
-  "exclude": []
+  "exclude": [
+    "/assets/music/cc0/aria.mp3",
+    "/assets/music/cc0/vaporware.mp3",
+    "/assets/music/cc0/sunset-plains.mp3",
+    "/assets/music/cc0/synthwave-4k.mp3",
+    "/assets/music/cc0/lifewave-2k.mp3"
+  ]
 }

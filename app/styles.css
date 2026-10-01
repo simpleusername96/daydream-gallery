@@ -300,13 +300,13 @@ body.atHome #goHome,body.atHome #worldSwitcher,body.atHome #playerControls {
 #playerControls button:hover {
   background:#ffffff15
 }
-.playIcon,.soundOnIcon {
+.playIcon {
   display:none!important
 }
-#playPause.paused .playIcon,#sound.soundEnabled .soundOnIcon {
+#playPause.paused .playIcon {
   display:block!important
 }
-#playPause.paused .pauseIcon,#sound.soundEnabled .soundOffIcon {
+#playPause.paused .pauseIcon {
   display:none
 }
 #sceneMenu {

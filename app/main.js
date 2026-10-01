@@ -6,16 +6,17 @@ import { PlaybackClock } from "./playback.js";
 import { WorldMusic } from "./music.js";
 import { createNavigation } from "./navigation.js";
 import { createGlyphControls } from "./glyph-controls.js";
+import { createMusicControls } from "./music-controls.js";
 
 const $ = id => document.getElementById(id);
 const worldSlot = $("worldSlot");
 const veil = $("transitionVeil"), status = $("worldStatus");
 const random = $("randomScene");
-const playPause = $("playPause"), sound = $("sound");
+const playPause = $("playPause");
 const clock = new PlaybackClock(), music = new WorldMusic(audioError);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const state = {
-  home: true, index: 0, playing: !reducedMotion.matches, muted: true,
+  home: true, index: 0, playing: !reducedMotion.matches,
   frame: null, previousFrame: null, ready: false, busy: false, mountToken: 0,
   capabilities: { play: false, scenes: false }, idleTimer: 0, statusTimer: 0,
   loadTimer: 0, slowTimer: 0, failed: false, transitionStart: 0, lastTransitionMs: 0,
@@ -29,6 +30,11 @@ const glyphControls = createGlyphControls({ container: $("playerControls"),
   onActivity: showChrome
 });
 window.addEventListener("pagehide", () => glyphControls.destroy(), { once: true });
+const musicControls = createMusicControls({ container: $("playerControls"), trigger: $("musicToggle"), music,
+  onStart: () => { if (!state.playing) { state.playing = true; syncWorldState(); updateControls(); } },
+  onActivity: showChrome, onOpen: () => { glyphControls.close(); document.querySelector('#aboutPanel details').open = false; }
+});
+window.addEventListener("pagehide", () => musicControls.destroy(), { once: true });
 function setStatus(message, persistent = false, durationMs = 2400, instruction = false) {
   clearTimeout(state.statusTimer);
   status.textContent = message; status.classList.toggle("visible", Boolean(message));
@@ -39,7 +45,7 @@ function scheduleChrome() {
   clearTimeout(state.idleTimer);
   if (state.home || document.body.classList.contains('chromeHidden')) return;
   state.idleTimer = setTimeout(() => {
-    if (!navigation.open && !glyphControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover, .chrome details[open]')) hideChrome();
+    if (!navigation.open && !glyphControls.open && !musicControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover, .chrome details[open]')) hideChrome();
   }, 3000);
 }
 function showChrome() {
@@ -47,6 +53,7 @@ function showChrome() {
 }
 function hideChrome() {
   glyphControls.close();
+  musicControls.close();
   clearTimeout(state.idleTimer);
   document.activeElement?.blur?.();
   document.querySelector("#aboutPanel details").open = false;
@@ -63,11 +70,8 @@ function updateControls() {
   }
   glyphControls.sync(brush);
   playPause.setAttribute("aria-pressed", String(!state.playing));
-  playPause.setAttribute("aria-label", state.playing ? "정지" : "재생");
-  playPause.title = state.playing ? "정지" : "재생"; playPause.classList.toggle("paused", !state.playing);
-  sound.disabled = !music.available;
-  sound.setAttribute("aria-pressed", String(!state.muted)); sound.classList.toggle("soundEnabled", !state.muted);
-  sound.title = !music.available ? "음악 준비 중" : state.muted ? "소리 켜기" : "소리 끄기"; sound.setAttribute("aria-label", sound.title);
+  playPause.setAttribute("aria-label", state.playing ? "전체 일시정지" : "전체 재생");
+  playPause.title = state.playing ? "전체 일시정지 · Space" : "전체 재생 · Space"; playPause.classList.toggle("paused", !state.playing);
   random.disabled = !state.ready || state.busy || !state.capabilities.scenes;
   $("stage").setAttribute("aria-busy", String(!state.ready || state.busy));
 }
@@ -173,6 +177,9 @@ function changeScene(action = "random-scene") {
 function selectWorld(id) {
   const index = WORLD_ORDER.indexOf(id); if (index < 0) return;
   navigate(id);
+  // Keep play() within the scene-selection gesture, before async renderer readiness.
+  music.setPlaying(state.playing && !state.home);
+  void music.activate();
 }
 
 function navigate(id) {
@@ -194,7 +201,7 @@ function applyRoute(restoreFocus = false) {
   const previousId = activeWorld().id;
   analyticsTime.select(null);
   analytics.view();
-  state.home = true; ++state.mountToken; glyphControls.sync(null);
+  state.home = true; ++state.mountToken; glyphControls.sync(null); musicControls.close();
   clearLoading(); clearTimeout(state.idleTimer); setStatus('');
   retireFrame(state.frame); retireFrame(state.previousFrame);
   state.frame = null; state.previousFrame = null;
@@ -214,16 +221,15 @@ function togglePlaying() {
   state.playing = !state.playing; syncWorldState(); updateControls(); showChrome();
 }
 function audioError() {
-  state.muted = true; music.setMuted(true); updateControls();
-  setStatus("소리를 시작하지 못했습니다. 소리 버튼을 다시 눌러 주세요.");
+  setStatus("음악을 재생하지 못했습니다. 음악 패널에서 다시 재생해 주세요.");
 }
 function toggleSound() {
   if (!music.available) return;
-  state.muted = !state.muted; updateControls(); showChrome();
-  music.setMuted(state.muted).catch(audioError);
+  musicControls.togglePlayback();
 }
 function handleShortcut(key, fromFrame = false) {
   key = key.toLowerCase();
+  if (key === "escape" && musicControls.open) { musicControls.close(true); showChrome(); return; }
   if (key === "escape" && glyphControls.open) { glyphControls.close(true); showChrome(); return; }
   if (navigation.open || ![' ','r','m','f','escape','tab'].includes(key) && !/^[1-9]$/.test(key)) return;
   if (key === 'tab') { if (!state.home) { showChrome(); if (fromFrame) $('goHome').focus({ preventScroll:true }); } return; }
@@ -239,7 +245,6 @@ function handleShortcut(key, fromFrame = false) {
 retry.addEventListener("click", () => mountWorld(state.index, true));
 random.addEventListener("click", () => { showChrome(); changeScene(); });
 playPause.addEventListener("click", togglePlaying);
-sound.addEventListener("click", toggleSound);
 $("focusView").addEventListener("click", hideChrome);
 window.addEventListener("message", event => {
   if (event.source !== state.frame?.contentWindow) return;
@@ -257,7 +262,7 @@ window.addEventListener("message", event => {
   if (message.type === "loading") { state.busy = true; updateControls(); }
   if (message.type === "status") setStatus(message.message, Boolean(message.persistent));
   if (message.type === "shortcut" && typeof message.key === "string") handleShortcut(message.key, true);
-  if (message.type === "activity" && message.intent === "activate") { glyphControls.close(); showChrome(); }
+  if (message.type === "activity" && message.intent === "activate") { glyphControls.close(); musicControls.close(); void music.activate(); showChrome(); }
 });
 window.addEventListener("keydown", event => {
   if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.target.closest?.(".analytics-consent, .analytics-settings") || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
@@ -280,6 +285,8 @@ window.addEventListener('click', event => {
   if (!event.isTrusted || state.home || navigation.open) return;
   const moved = revealPointer?.moved; revealPointer=null;
   if (moved) return;
+  // A direct scene URL has no selection gesture; its first scene tap starts audio.
+  if (!event.target.closest?.('.chrome, #loadingNotice, .analytics-consent, .analytics-settings')) void music.activate();
   if (document.body.classList.contains('chromeHidden')) {
     showChrome();
     if (!event.target.closest?.('#loadingNotice, .analytics-consent, .analytics-settings')) { event.preventDefault(); event.stopImmediatePropagation(); }
@@ -302,7 +309,7 @@ document.addEventListener("visibilitychange", () => { analyticsTime.flush(); las
 reducedMotion.addEventListener("change", event => { if (event.matches) { state.playing = false; syncWorldState(); updateControls(); } });
 window.addEventListener("pagehide", () => { analyticsTime.flush(); clearInterval(timer); clearTimeout(state.idleTimer); clearLoading(); clearTimeout(state.statusTimer); retireFrame(state.frame); retireFrame(state.previousFrame); music.dispose(); }, { once:true });
 // Read-only diagnostics for actual-browser checks; no authoring surface.
-window.daydreamPlayer = Object.freeze({ snapshot: () => ({ view:state.home ? "home" : "player", world:state.home ? null : activeWorld().id, menuOpen:navigation.open, mode:"fixed", playing:state.playing, muted:state.muted,
+window.daydreamPlayer = Object.freeze({ snapshot: () => ({ view:state.home ? "home" : "player", world:state.home ? null : activeWorld().id, menuOpen:navigation.open, mode:"fixed", playing:state.playing, muted:music.snapshot().muted,
   ready:state.ready, busy:state.busy, failed:state.failed, worldMs:clock.worldMs, sceneMs:clock.sceneMs,
   lastTransitionMs:state.lastTransitionMs, frameCount:worldSlot.querySelectorAll("iframe").length, music:music.snapshot() }) });
 applyRoute();

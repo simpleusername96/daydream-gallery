@@ -25,6 +25,7 @@
   <title>Daydream Gallery</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="app/styles.css">
+  <link rel="stylesheet" href="app/music-controls.css">
 
   <script type="application/ld+json">
     {
@@ -93,16 +94,15 @@
   </aside>
 
   <div id="playerControls" class="chrome" aria-label="재생 조작">
-    <button type="button" id="playPause" class="iconButton" title="정지" aria-label="정지" aria-pressed="false">
+    <button type="button" id="playPause" class="iconButton" title="전체 일시정지 · Space" aria-label="전체 일시정지" aria-pressed="false">
       <svg class="pauseIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
       <svg class="playIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l9 6-9 6z"/></svg>
     </button>
     <button type="button" id="randomScene" class="sceneButton" title="새로운 장면 보기 · R" aria-label="새 장면 보기">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3c4 0 5 10 9 10h4M17 14l3 3-3 3M4 17h3c1.7 0 2.9-1.8 4-4M15 7h5M17 4l3 3-3 3"/></svg>
     </button>
-    <button type="button" id="sound" class="iconButton" title="소리 켜기" aria-label="소리 켜기" aria-pressed="false">
-      <svg class="soundOnIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10h4l4-4v12l-4-4H5zM16 9c1 1 1 5 0 6M19 7c2 3 2 7 0 10"/></svg>
-      <svg class="soundOffIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10h4l4-4v12l-4-4H5zM17 10l4 4M21 10l-4 4"/></svg>
+    <button type="button" id="musicToggle" class="iconButton" title="음악 열기" aria-label="음악 열기" aria-expanded="false" aria-controls="musicPanel" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13M9 9l11-2"/><ellipse cx="6" cy="18" rx="3" ry="2.5"/><ellipse cx="17" cy="16" rx="3" ry="2.5"/></svg>
     </button>
     <button type="button" id="focusView" class="iconButton" title="화면만 보기" aria-label="컨트롤 숨기기">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5M4 4l16 16"/></svg>

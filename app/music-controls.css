@@ -1,0 +1,46 @@
+/* One restrained surface above the shared player; no visible scrollbar chrome. */
+.musicPanel {
+  position:absolute; bottom:calc(100% + 12px); left:50%; transform:translateX(-50%);
+  width:min(320px,calc(100vw - 24px)); max-height:calc(100dvh - 108px - env(safe-area-inset-bottom));
+  display:flex; flex-direction:column; padding:12px; border:1px solid #ffffff14;
+  border-radius:20px; background:rgba(24,26,29,.97); box-shadow:0 12px 40px #0003;
+  color:#f4f4f5; color-scheme:dark;
+}
+.musicHeading { display:flex; align-items:center; gap:8px; padding-left:10px; flex-shrink:0; }
+#musicTitle { flex:1; min-width:0; font-size:15px; font-weight:550; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.musicPanel .musicButton { width:40px; height:40px; flex-shrink:0; border:0; border-radius:50%; display:grid; place-items:center; padding:10px; color:inherit; background:transparent; cursor:pointer; }
+.musicPanel svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.musicPanel button:hover { background:#ffffff12; }
+.musicPanel button:disabled { opacity:.25; cursor:default; }
+.musicPanel button:focus-visible,.musicPanel input:focus-visible { outline:2px solid #e4e4e7; outline-offset:1px; }
+.musicTransport { display:flex; justify-content:space-between; align-items:center; padding:8px 4px 0; flex-shrink:0; }
+.musicSingle .musicTransport { justify-content:center; }
+.musicPanel #musicPlay { width:48px; height:48px; padding:13px; color:#202225; background:#f4f4f5; }
+.musicPanel #musicPlay:hover { background:#dfe1e4; }
+#musicShuffle,#musicRepeat,#musicEdit { color:#b4b6bd; }
+#musicRepeat[aria-pressed="true"],#musicEdit[aria-pressed="true"] { color:#fff; background:#ffffff18; }
+.musicVolume { display:flex; align-items:center; gap:12px; padding:5px 10px; flex-shrink:0; }
+#musicVolumeIcon { display:flex; color:#b4b6bd; }
+#musicVolumeIcon svg { width:17px; height:17px; }
+#musicVolume { appearance:none; -webkit-appearance:none; flex:1; min-width:0; height:36px; margin:0; background:transparent; cursor:pointer; border-radius:6px; }
+#musicVolume::-webkit-slider-runnable-track { height:3px; border-radius:3px; background:linear-gradient(to right,#e2e3e7 var(--volume),#ffffff29 var(--volume)); }
+#musicVolume::-moz-range-track { height:3px; border-radius:3px; background:#ffffff29; }
+#musicVolume::-moz-range-progress { height:3px; background:#e2e3e7; }
+#musicVolume::-webkit-slider-thumb { appearance:none; width:12px; height:12px; margin-top:-4.5px; border:0; border-radius:50%; background:#f4f4f5; }
+#musicVolume::-moz-range-thumb { width:12px; height:12px; border:0; border-radius:50%; background:#f4f4f5; }
+.musicQueue { list-style:none; padding:6px 0 0; margin:2px 0 0; min-height:48px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; border-top:1px solid #ffffff10; }
+.musicQueue::-webkit-scrollbar { display:none; }
+.musicQueue li { display:flex; align-items:center; min-height:44px; border-radius:9px; }
+.musicTrack { flex:1; min-width:0; height:44px; display:flex; align-items:center; gap:10px; padding:0 10px; border:0; border-radius:9px; color:#bfc1c7; background:transparent; text-align:left; font-size:14px; cursor:pointer; }
+.musicTrack[aria-current="true"] { color:#fff; background:#ffffff0b; }
+.musicQueue button:focus-visible { outline-offset:-2px; }
+.musicTrackMark { width:14px; flex-shrink:0; display:flex; }
+.musicTrackMark svg { width:14px; height:14px; }
+.musicTrackName { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.musicPanel .musicMove { display:none; }
+.musicEditing .musicMove { display:grid; }
+#musicToggle { position:relative; }
+#musicToggle[aria-expanded="true"] { background:#ffffff18; }
+#musicToggle.musicActive::after { content:''; position:absolute; width:3px; height:3px; bottom:4px; border-radius:50%; background:currentColor; }
+@media (max-height:500px) { .musicPanel { padding:8px; bottom:calc(100% + 8px); } .musicHeading { min-height:32px; } .musicTransport { padding-top:0; } }
+@media (forced-colors:active) { .musicPanel { border:1px solid CanvasText; } .musicTrack[aria-current="true"] { outline:1px solid Highlight; } #musicVolume { appearance:auto; } }
