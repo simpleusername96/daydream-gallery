@@ -19,7 +19,7 @@ export function createGlyphControls({ container, onChange, onActivity }) {
     trigger.append(icon); trigger.setAttribute('aria-expanded', 'false');
     trigger.setAttribute('aria-controls', spec.id + 'Picker');
     const picker = document.createElement('div');
-    picker.id = spec.id + 'Picker'; picker.className = 'glyphPicker'; picker.hidden = true;
+    picker.id = spec.id + 'Picker'; picker.className = 'glyphPicker'; picker.hidden = true; picker.inert = true;
     picker.setAttribute('role', 'group'); picker.setAttribute('aria-label', spec.label + ' 선택');
     root.append(trigger, picker);
     return { ...spec, trigger, icon, picker };
@@ -27,14 +27,14 @@ export function createGlyphControls({ container, onChange, onActivity }) {
   function close(restoreFocus = false) {
     const previous = opened;
     opened = null;
-    for (const entry of entries) { entry.picker.hidden = true; entry.trigger.setAttribute('aria-expanded', 'false'); }
+    for (const entry of entries) { entry.picker.inert = true; entry.picker.hidden = true; entry.trigger.setAttribute('aria-expanded', 'false'); }
     if (restoreFocus && previous && !root.hidden) previous.trigger.focus({ preventScroll: true });
   }
   for (const entry of entries) {
     listen(entry.trigger, 'click', () => {
       if (!model) return;
       const opening = opened !== entry; close();
-      if (opening) { opened = entry; entry.picker.hidden = false; entry.trigger.setAttribute('aria-expanded', 'true'); }
+      if (opening) { opened = entry; entry.picker.inert = false; entry.picker.hidden = false; entry.trigger.setAttribute('aria-expanded', 'true'); }
       onActivity();
     });
     listen(entry.picker, 'click', event => {

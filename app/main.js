@@ -134,7 +134,14 @@ function finishReady(capabilities) {
   state.lastTransitionMs = performance.now() - state.transitionStart;
   syncWorldState(); updateControls(); scheduleChrome();
   state.frame?.classList.add("ready");
-  retireFrame(state.previousFrame); state.previousFrame = null;
+  const outgoing = state.previousFrame;
+  const fade = state.frame?.getAnimations().filter(animation => animation.transitionProperty === "opacity") ?? [];
+  const retireOutgoing = () => {
+    if (state.previousFrame !== outgoing) return;
+    retireFrame(outgoing); state.previousFrame = null;
+  };
+  if (fade.length) Promise.allSettled(fade.map(animation => animation.finished)).then(retireOutgoing);
+  else retireOutgoing();
   const token = state.mountToken;
   requestAnimationFrame(() => {
     if (token !== state.mountToken || state.busy) return;
@@ -149,7 +156,12 @@ function mountWorld(index, force = false) {
   const token = ++state.mountToken;
   // Keep only the visible outgoing scene while one incoming scene initializes.
   // Rapid selections retire the pending scene, never accumulate hidden renderers.
-  if (!state.previousFrame && state.frame?.classList.contains("ready")) { state.previousFrame = state.frame; state.previousFrame.inert = true; }
+  if (state.frame?.classList.contains("ready")) {
+    retireFrame(state.previousFrame);
+    state.previousFrame = state.frame; state.previousFrame.inert = true;
+    // A new selection commits an interrupted fade before preparing its successor.
+    state.previousFrame.getAnimations().forEach(animation => animation.finish());
+  }
   else retireFrame(state.frame);
   state.frame = null;
   state.index = nextIndex; state.ready = false; state.busy = false; state.capabilities = { play:false, scenes:false };

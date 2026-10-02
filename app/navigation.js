@@ -39,7 +39,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
     if (!dialog.open) return;
     positions.set(selected, list.children[nearest()]?.dataset.world);
     keyboardTarget = null;
-    dialog.close(); trigger.setAttribute('aria-expanded', 'false');
+    dialog.close(); dialog.inert = true; trigger.setAttribute('aria-expanded', 'false');
     if (restore) trigger.focus({ preventScroll: true });
   }
   function nearest() {
@@ -79,7 +79,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
   function open() {
     if (home.hidden === false || dialog.open) return;
     list.replaceChildren(...order.filter(id => id !== selected).map(id => card(id, false)));
-    dialog.showModal(); trigger.setAttribute('aria-expanded', 'true');
+    dialog.inert = false; dialog.showModal(); trigger.setAttribute('aria-expanded', 'true');
     // Remember the image, not pixel offsets, so rotation preserves the same place.
     const remembered = [...list.children].findIndex(item => item.dataset.world === positions.get(selected));
     center(remembered >= 0 ? remembered : Math.min(2, Math.floor((list.children.length - 1) / 2)));
@@ -146,7 +146,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
     get open() { return dialog.open; },
     close: dismiss,
     showHome() {
-      dismiss(false); home.hidden = false; selected = null;
+      dismiss(false); home.inert = false; home.hidden = false; selected = null;
       grid.scrollTop = homeScroll;
       document.body.classList.add('atHome');
       updateHomeScroll();
@@ -154,7 +154,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
     showWorld(id) {
       dismiss(false); selected = id;
       if (!home.hidden) homeScroll = grid.scrollTop;
-      home.hidden = true;
+      home.inert = true; home.hidden = true;
       document.body.classList.remove('atHome');
     },
     focusHome(id) { cards.get(id)?.focus({ preventScroll: true }); }

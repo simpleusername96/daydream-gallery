@@ -18,7 +18,7 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
   const lifetime = new AbortController();
   const listen = (node, type, handler) => node.addEventListener(type, handler, { signal: lifetime.signal });
   const panel = document.createElement('section');
-  panel.id = 'musicPanel'; panel.className = 'musicPanel'; panel.hidden = true;
+  panel.id = 'musicPanel'; panel.className = 'musicPanel'; panel.hidden = true; panel.inert = true;
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', '음악');
   panel.innerHTML = `<div class="musicHeading"><span id="musicTitle"></span>${button('musicEdit', 'edit', '재생 순서 편집')}</div>
     <div class="musicTransport">${button('musicShuffle', 'shuffle', '현재 곡 다음부터 섞기')}${button('musicPrevious', 'previous', '이전 곡')}${button('musicPlay', 'play', '음악 재생 · M')}${button('musicNext', 'next', '다음 곡')}${button('musicRepeat', 'repeat', '한 곡 반복')}</div>
@@ -82,7 +82,7 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
   }
   function close(restoreFocus = false) {
     if (!opened) return;
-    opened = false; panel.hidden = true; trigger.setAttribute('aria-expanded', 'false');
+    opened = false; panel.inert = true; panel.hidden = true; trigger.setAttribute('aria-expanded', 'false');
     label(trigger, '음악 열기');
     if (restoreFocus) trigger.focus({ preventScroll: true });
     onActivity();
@@ -95,7 +95,7 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
   }
   listen(trigger, 'click', () => {
     if (opened) { close(true); return; }
-    onOpen(); opened = true; panel.hidden = false; render();
+    onOpen(); opened = true; panel.inert = false; panel.hidden = false; render();
     trigger.setAttribute('aria-expanded', 'true'); label(trigger, '음악 닫기');
     get('musicPlay').focus({ preventScroll: true });
     queue.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });

@@ -155,14 +155,14 @@ export function createAboutModal({ onOpen, onClose, getScene }) {
     if (!dialog.open) return;
     restoreFocus = restore;
     surface.stop();
-    dialog.close();
+    dialog.close(); dialog.inert = true;
     trigger.setAttribute('aria-expanded', 'false');
   }
   trigger.addEventListener('click', () => {
     if (dialog.open) return;
     onOpen();
     restoreFocus = true;
-    dialog.showModal();
+    dialog.inert = false; dialog.showModal();
     surface.start();
     trigger.setAttribute('aria-expanded', 'true');
   });

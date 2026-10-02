@@ -6,6 +6,9 @@
   --glass:rgba(8,11,13,.58);
   --glass-strong:rgba(8,11,13,.78);
   --ease:cubic-bezier(.2,.72,.18,1);
+  --motion-ui:220ms;
+  --motion-page:320ms;
+  --motion-exit:180ms;
   --hit:46px;
   --edge:max(22px,env(safe-area-inset-left));
 }
@@ -20,6 +23,7 @@ html,body {
 }
 body {
   background:#101413;
+  transition:background-color var(--motion-page) var(--ease);
   color:var(--ink);
   font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   -webkit-font-smoothing:antialiased
@@ -205,7 +209,8 @@ body.atHome {
   border:0;
   opacity:0;
   background:transparent;
-  pointer-events:none
+  pointer-events:none;
+  transition:opacity var(--motion-page) var(--ease)
 }
 .worldFrame.interactive {
   pointer-events:auto
@@ -218,11 +223,10 @@ body.atHome {
   pointer-events:none;
   background:rgba(5,7,8,.24);
   opacity:0;
-  transition:opacity .18s var(--ease)
+  transition:opacity var(--motion-ui) var(--ease)
 }
 #transitionVeil.covering {
   opacity:1;
-  transition:none;
   pointer-events:auto
 }
 .chrome {
@@ -230,12 +234,18 @@ body.atHome {
   z-index:20;
   display:flex;
   align-items:center;
-  transition:opacity .4s var(--ease),visibility .4s
+  --chrome-shift:-6px;
+  opacity:1;
+  visibility:visible;
+  translate:0 0;
+  transition:opacity var(--motion-ui) var(--ease),translate var(--motion-ui) var(--ease),visibility 0s,display var(--motion-ui) allow-discrete
 }
 body.chromeHidden:not(.atHome) .chrome {
   opacity:0;
   visibility:hidden;
-  pointer-events:none
+  translate:0 var(--chrome-shift);
+  pointer-events:none;
+  transition-delay:0s,0s,var(--motion-ui),0s
 }
 .iconButton,.sceneButton {
   width:var(--hit);
@@ -281,9 +291,13 @@ body.chromeHidden:not(.atHome) .chrome {
   top:max(18px,env(safe-area-inset-top))
 }
 body.atHome #goHome,body.atHome #worldSwitcher,body.atHome #playerControls {
-  display:none
+  display:none;
+  opacity:0;
+  translate:0 var(--chrome-shift);
+  pointer-events:none
 }
 #playerControls {
+  --chrome-shift:6px;
   left:50%;
   bottom:max(22px,env(safe-area-inset-bottom));
   transform:translateX(-50%);
@@ -472,9 +486,6 @@ body.atHome #goHome,body.atHome #worldSwitcher,body.atHome #playerControls {
   -webkit-backdrop-filter: none;
   box-shadow: none;
 }
-body.chromeHidden #aboutPanel {
-  transform: translateY(-8px);
-}
 #aboutToggle {
   width: 42px;
   height: 42px;
@@ -515,8 +526,6 @@ body.chromeHidden #aboutPanel {
   -webkit-backdrop-filter:blur(12px) saturate(115%);
 }
 .aboutCard::backdrop { background:rgb(5 10 12 / .50); }
-.aboutCard[open] { animation:aboutAppear .18s var(--ease); }
-@keyframes aboutAppear { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .aboutHeader { display:flex; align-items:center; justify-content:space-between; gap:16px; }
 #closeAbout { flex:none; width:44px; height:44px; border-radius:10px; background:transparent; color:var(--about-ink); }
 #closeAbout:hover { background:rgb(var(--about-control) / .12); }
@@ -651,16 +660,16 @@ body.atHome #aboutToggle svg {
   }
 }
 @media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {
+  *,*::before,*::after,*::backdrop {
     transition:none!important;
     animation:none!important;
     scroll-behavior:auto!important
   }
 }
-body:has(#sceneMenu[open]) .chrome {
+body:has(#sceneMenu[open],#aboutDialog[open]) .chrome {
   opacity:0;
-  pointer-events:none;
-  transition:none
+  translate:0 var(--chrome-shift);
+  pointer-events:none
 }
 
 /* Grayscale inversion is clipped to the icon strokes, never a backdrop panel.
@@ -698,6 +707,50 @@ body:has(#sceneMenu[open]) .chrome {
   #playerControls .iconButton,#playerControls .sceneButton { width:40px; height:40px; }
 }
 
-body:has(#aboutDialog[open]) .chrome { opacity:0; pointer-events:none; transition:none; }
-
 [data-copy="credit"] { white-space: pre-line; }
+
+/* Native state changes remain immediate; only the visible presentation eases. */
+#homeGallery,#stage {
+  opacity:1;
+  transition:opacity var(--motion-page) var(--ease),display var(--motion-page) allow-discrete;
+}
+#homeGallery { background:#f5f5f2; }
+#homeGallery[hidden],#stage[hidden] { opacity:0; pointer-events:none; }
+
+#aboutDialog,#sceneMenu {
+  opacity:0;
+  transition:opacity var(--motion-exit) var(--ease),translate var(--motion-exit) var(--ease),
+    display var(--motion-exit) allow-discrete,overlay var(--motion-exit) allow-discrete;
+}
+#aboutDialog { translate:0 8px; }
+#aboutDialog[open],#sceneMenu[open] {
+  opacity:1; translate:0 0;
+  transition-duration:var(--motion-ui);
+}
+#aboutDialog:not([open]),#sceneMenu:not([open]) { pointer-events:none; }
+#aboutDialog::backdrop,#sceneMenu::backdrop {
+  opacity:0;
+  transition:opacity var(--motion-ui,220ms) var(--ease,ease),
+    display var(--motion-ui,220ms) allow-discrete,overlay var(--motion-ui,220ms) allow-discrete;
+}
+#aboutDialog[open]::backdrop,#sceneMenu[open]::backdrop { opacity:1; }
+#aboutDialog:not([open])::backdrop,#sceneMenu:not([open])::backdrop { pointer-events:none; }
+.sceneRail { translate:0 10px; transition:translate var(--motion-ui) var(--ease); }
+#sceneMenu[open] .sceneRail { translate:0 0; }
+
+.musicPanel,.glyphPicker {
+  opacity:1; translate:0 0;
+  transition:opacity var(--motion-ui) var(--ease),translate var(--motion-ui) var(--ease),
+    display var(--motion-ui) allow-discrete;
+}
+.musicPanel[hidden],.glyphPicker[hidden] { opacity:0; translate:0 6px; pointer-events:none; }
+
+@starting-style {
+  #homeGallery:not([hidden]),#stage:not([hidden]) { opacity:0; }
+  .chrome { opacity:0; translate:0 var(--chrome-shift); }
+  #aboutDialog[open] { opacity:0; translate:0 8px; }
+  #sceneMenu[open] { opacity:0; }
+  #sceneMenu[open] .sceneRail { translate:0 10px; }
+  #aboutDialog[open]::backdrop,#sceneMenu[open]::backdrop { opacity:0; }
+  .musicPanel:not([hidden]),.glyphPicker:not([hidden]) { opacity:0; translate:0 6px; }
+}
