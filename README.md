@@ -6,8 +6,8 @@
 
 <!-- docs:gallery:start -->
 <table>
-  <tr><th colspan="2" scope="col">ASCII Bloom</th></tr>
-  <tr><td colspan="2"><a href="https://daydream-gallery.pages.dev/#ascii-bloom"><img src="assets/previews/ascii-bloom.webp" width="800" alt="ASCII Bloom"></a></td></tr>
+  <tr><th width="50%" scope="col">Arctic Aurora</th><th width="50%" scope="col">ASCII Bloom</th></tr>
+  <tr><td width="50%"><a href="https://daydream-gallery.pages.dev/#arctic-aurora"><img src="assets/previews/arctic-aurora.webp" width="800" alt="Arctic Aurora"></a></td><td width="50%"><a href="https://daydream-gallery.pages.dev/#ascii-bloom"><img src="assets/previews/ascii-bloom.webp" width="800" alt="ASCII Bloom"></a></td></tr>
   <tr><th width="50%" scope="col">Paper Wings</th><th width="50%" scope="col">White Sands</th></tr>
   <tr><td width="50%"><a href="https://daydream-gallery.pages.dev/#paper-wings"><img src="assets/previews/paper-wings.webp" width="800" alt="Paper Wings"></a></td><td width="50%"><a href="https://daydream-gallery.pages.dev/#white-sands"><img src="assets/previews/white-sands.webp" width="800" alt="White Sands"></a></td></tr>
   <tr><th width="50%" scope="col">Glass Valley</th><th width="50%" scope="col">Quiet Ascent</th></tr>

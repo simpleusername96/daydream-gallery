@@ -8,6 +8,10 @@ These notices apply to the listed components. They do not license Daydream Galle
 - **Quaternius — Ultimate Nature Pack** — CC0 1.0. Selected visual assets are embedded in Journey.
 - **Kenney — Nature Kit** — CC0 1.0. Selected visual assets are embedded in Journey.
 
+## Arctic Aurora artwork
+
+Arctic Aurora uses two images generated for Daydream Gallery with OpenAI image generation: the approved aurora reference and a derived clean background plate. Its JavaScript and GLSL were authored for this project. No external shader implementation or reference photograph is distributed. This statement does not assign a separate open-source or public-domain license to the scene or artwork.
+
 ## Original audio
 
 - **Journey — Daydream Gallery (`assets/audio/shared-loop.wav`)** — the repository-authored 32-second Journey score, used across all scenes. No third-party samples or recordings are used.

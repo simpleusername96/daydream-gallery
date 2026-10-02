@@ -1,7 +1,20 @@
 // Reviewed public collection; newest publication first.
-export const WORLD_ORDER = ["ascii-bloom","paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
+export const WORLD_ORDER = ["arctic-aurora","ascii-bloom","paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
 
 export const WORLDS = Object.freeze({
+  "arctic-aurora": {
+    "id": "arctic-aurora",
+    "thumbnail": "assets/previews/arctic-aurora.webp",
+    "label": "Arctic Aurora",
+    "adapter": "worlds/arctic-aurora/adapter.html",
+    "autoDurationMs": 0,
+    "sceneDurationMs": 0,
+    "defaultCapabilities": {
+      "play": true,
+      "sound": false,
+      "scenes": false
+    }
+  },
   "ascii-bloom": {
     "id": "ascii-bloom",
     "thumbnail": "assets/previews/ascii-bloom.webp",
