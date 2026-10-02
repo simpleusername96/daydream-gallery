@@ -11,6 +11,10 @@ connectWorld({
   prepare(doc) {
     if (!doc || prepared.has(doc)) return;
     prepared.add(doc);
+    doc.addEventListener('ascii-bloom-brush-change', () => {
+      const brush = window.daydreamWorld?.getBrush();
+      if (brush) parent.postMessage({ source: 'daydream-gallery-world', world: 'ascii-bloom', type: 'brush', brush }, location.origin === 'null' ? '*' : location.origin);
+    });
     doc.addEventListener('keydown', event => {
       if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.repeat) return;
       const key = event.key.toLowerCase();

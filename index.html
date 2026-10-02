@@ -66,32 +66,35 @@
   </dialog>
 
   <aside id="aboutPanel" class="chrome" aria-label="Daydream Gallery 정보">
-    <details>
-      <summary title="프로젝트 정보" aria-label="프로젝트 정보 보기">
+    <button id="aboutToggle" class="iconButton" type="button" title="프로젝트 정보" aria-label="프로젝트 정보 보기" aria-haspopup="dialog" aria-controls="aboutDialog" aria-expanded="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
-      </summary>
-      <section class="aboutCard">
-        <img src="assets/previews/stillwater.png" width="1600" height="900" loading="lazy" alt="노을빛 하늘 아래 연꽃과 물고기가 움직이는 Stillwater 연못 풍경">
-        <div class="aboutCopy">
-          <div class="languageSwitch" role="group" aria-label="설명 언어">
-            <button type="button" data-language="ko" aria-pressed="true">한국어</button>
-            <button type="button" data-language="en" aria-pressed="false">English</button>
-          </div>
-          <div id="artworkCredit" hidden>
-            <p><strong id="artworkTitle"></strong></p>
-            <p id="artworkInstitution"></p>
-            <p id="artworkInterpretation"></p>
-            <p><a id="artworkOriginal" target="_blank" rel="noopener noreferrer"></a> · <a id="artworkMuseum" target="_blank" rel="noopener noreferrer"></a></p>
-          </div>
-          <h1>Daydream Gallery</h1>
-          <p data-copy="description">만들고 싶은 장면을 만들어 모아두는 개인 갤러리입니다.</p>
-          <p data-copy="use">마음에 드는 작품을 골라 감상해 보세요.</p>
-          <p data-copy="credit">모든 장면은 AI로 개발했습니다.</p>
-          <a class="sourceLink" data-copy="source" href="https://github.com/simpleusername96/daydream-gallery" target="_blank" rel="noopener noreferrer">GitHub에서 공개 코드 보기</a>
-        </div>
-      </section>
-    </details>
+    </button>
   </aside>
+  <dialog id="aboutDialog" class="aboutCard" aria-labelledby="aboutTitle">
+    <div class="aboutHeader">
+      <div class="languageSwitch" role="group" aria-label="설명 언어">
+        <button type="button" data-language="ko" aria-pressed="true" aria-label="한국어">KR</button>
+        <button type="button" data-language="en" aria-pressed="false" aria-label="English">EN</button>
+      </div>
+      <button id="closeAbout" class="iconButton" type="button" aria-label="닫기" title="닫기" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="aboutCopy">
+      <h1 id="aboutTitle">Daydream Gallery</h1>
+      <p data-copy="description">만들고 싶은 장면을 만들어 모아두는 개인 갤러리입니다.</p>
+      <p data-copy="use">마음에 드는 작품을 골라 감상해 보세요.</p>
+      <div id="artworkCredit" hidden>
+        <p><strong id="artworkTitle"></strong></p>
+        <p id="artworkInstitution"></p>
+        <p id="artworkInterpretation"></p>
+        <p><a id="artworkOriginal" target="_blank" rel="noopener noreferrer"></a> · <a id="artworkMuseum" target="_blank" rel="noopener noreferrer"></a></p>
+      </div>
+      <footer class="aboutFooter">
+        <p data-copy="credit">모든 시각적 결과물은 AI를 활용해 제작했습니다.
+배경음악은 공개 라이선스로 제공된 곡을 사용했습니다.</p>
+        <a class="sourceLink" data-copy="source" href="https://github.com/simpleusername96/daydream-gallery" target="_blank" rel="noopener noreferrer">GitHub에서 공개 코드 보기</a>
+      </footer>
+    </div>
+  </dialog>
 
   <div id="playerControls" class="chrome" aria-label="재생 조작">
     <button type="button" id="playPause" class="iconButton" title="전체 일시정지 · Space" aria-label="전체 일시정지" aria-pressed="false">

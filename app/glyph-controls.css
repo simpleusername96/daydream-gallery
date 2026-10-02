@@ -8,4 +8,4 @@
 .glyphChoice { display:grid; place-items:center; width:40px; height:40px; padding:0; border:0; border-radius:9px; background:transparent; color:var(--glyph-color); cursor:pointer; font:600 21px/1 ui-monospace,Consolas,"DejaVu Sans Mono","Segoe UI Symbol",monospace; }
 .glyphChoice:hover, .glyphChoice[aria-pressed="true"], .glyphTrigger[aria-expanded="true"] { background:#ffffff13; }
 .glyphChoice:focus-visible, .glyphTrigger:focus-visible { outline:2px solid #c7ccd4; outline-offset:1px; }
-@media (max-width:480px) { #playerControls:has(.glyphControls:not([hidden])) { gap:3px; padding:7px; } .glyphControls { gap:2px; padding-right:4px; margin-right:1px; } #playerControls:has(.glyphControls:not([hidden])) > button, .glyphTrigger { width:40px; height:42px; min-width:40px; } }
+@media (max-width:600px), (max-height:500px) and (pointer:coarse) { .glyphControls { gap:2px; padding-right:4px; margin-right:1px; } #playerControls .glyphTrigger { width:40px; height:40px; min-width:40px; } .glyphTrigger > span:not(.glyphSwatch) { font-size:19px; } .glyphSwatch { width:13px; height:13px; } }

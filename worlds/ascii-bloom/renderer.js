@@ -170,16 +170,26 @@ function setBrush(value) {
   if (!KINDS.includes(kind) || !KINDS.includes(tone)) return false;
   selected = kind; selectedTone = tone; updateCursor(); return true;
 }
+function randomBrush(excludePrevious = true) {
+  const another = current => {
+    const choices = excludePrevious ? KINDS.filter(value => value !== current) : KINDS;
+    return choices[Math.floor(Math.random() * choices.length)];
+  };
+  selected = another(selected); selectedTone = another(selectedTone);
+  updateCursor();
+  document.dispatchEvent(new Event('ascii-bloom-brush-change'));
+}
 function randomScene() {
   if (disposed) return false;
   currentSeed = (currentSeed + 1) >>> 0;
-  replaceField(field.cols, field.rows); lastTime = null;
+  replaceField(field.cols, field.rows); randomBrush(); lastTime = null;
   forceDraw = true; render(); return true;
 }
 function stamp(x, y) {
   if (disposed) return 0;
   // A paused parent remains paused; pending waves continue when playback resumes.
   const changed = field.stamp(x, y, selected, selectedTone);
+  if (changed) randomBrush();
   render(); return changed;
 }
 function drawTo(target) {
@@ -225,7 +235,7 @@ listen(document, 'visibilitychange', () => {
 });
 listen(motionPreference, 'change', () => { forceDraw = true; render(); });
 listen(window, 'pagehide', destroy, { once: true });
-fit();
+fit(); randomBrush(false);
 window.asciiBloom = Object.freeze({
   get ready() { return !disposed; },
   player: Object.freeze({ setPlaying, randomScene, nextScene: randomScene, previousScene: randomScene, getBrush, setBrush, drawTo, destroy }),

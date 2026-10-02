@@ -13,10 +13,12 @@
     "/assets/music/*"
   ],
   "exclude": [
-    "/assets/music/cc0/aria.mp3",
     "/assets/music/cc0/vaporware.mp3",
-    "/assets/music/cc0/sunset-plains.mp3",
     "/assets/music/cc0/synthwave-4k.mp3",
-    "/assets/music/cc0/lifewave-2k.mp3"
+    "/assets/music/cc0/lifewave-2k.mp3",
+    "/assets/music/kevin-macleod/wisps-of-whorls.mp3",
+    "/assets/music/kevin-macleod/deep-relaxation-part-1.mp3",
+    "/assets/music/kevin-macleod/deep-relaxation-part-2.mp3",
+    "/assets/music/kevin-macleod/deep-relaxation-part-3.mp3"
   ]
 }

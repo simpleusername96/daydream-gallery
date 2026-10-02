@@ -1,3 +1,4 @@
+import { createAboutModal } from "./about.js";
 import { analytics } from "./analytics.js";
 import { ActiveTime } from "./analytics-time.js";
 const analyticsTime = new ActiveTime(analytics);
@@ -32,9 +33,14 @@ const glyphControls = createGlyphControls({ container: $("playerControls"),
 window.addEventListener("pagehide", () => glyphControls.destroy(), { once: true });
 const musicControls = createMusicControls({ container: $("playerControls"), trigger: $("musicToggle"), music,
   onStart: () => { if (!state.playing) { state.playing = true; syncWorldState(); updateControls(); } },
-  onActivity: showChrome, onOpen: () => { glyphControls.close(); document.querySelector('#aboutPanel details').open = false; }
+  onActivity: showChrome, onOpen: () => { glyphControls.close(); aboutControls.close(false); }
 });
 window.addEventListener("pagehide", () => musicControls.destroy(), { once: true });
+const aboutControls = createAboutModal({
+  onOpen: () => { glyphControls.close(); musicControls.close(); showChrome(); },
+  onClose: scheduleChrome,
+  getScene: () => state.home ? null : bridge(state.previousFrame || state.frame)
+});
 function setStatus(message, persistent = false, durationMs = 2400, instruction = false) {
   clearTimeout(state.statusTimer);
   status.textContent = message; status.classList.toggle("visible", Boolean(message));
@@ -45,7 +51,7 @@ function scheduleChrome() {
   clearTimeout(state.idleTimer);
   if (state.home || document.body.classList.contains('chromeHidden')) return;
   state.idleTimer = setTimeout(() => {
-    if (!navigation.open && !glyphControls.open && !musicControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover, .chrome details[open]')) hideChrome();
+    if (!aboutControls.open && !navigation.open && !glyphControls.open && !musicControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover')) hideChrome();
   }, 3000);
 }
 function showChrome() {
@@ -56,7 +62,7 @@ function hideChrome() {
   musicControls.close();
   clearTimeout(state.idleTimer);
   document.activeElement?.blur?.();
-  document.querySelector("#aboutPanel details").open = false;
+  aboutControls.close(false);
   document.body.classList.add("chromeHidden");
 }
 function updateSelection() {
@@ -188,6 +194,7 @@ function navigate(id) {
   applyRoute(true);
 }
 function applyRoute(restoreFocus = false) {
+  aboutControls.close(false);
   const id = location.hash.slice(1);
   const index = WORLD_ORDER.indexOf(id);
   if (index >= 0) {
@@ -209,7 +216,7 @@ function applyRoute(restoreFocus = false) {
   state.capabilities = { play: false, scenes: false };
   clock.resetWorld(); music.setPlaying(false);
   $('stage').hidden = true;
-  document.querySelector('#aboutPanel details').open = false;
+  aboutControls.close(false);
   document.body.classList.remove('chromeHidden');
   navigation.showHome();
   if (restoreFocus) navigation.focusHome(previousId);
@@ -231,7 +238,7 @@ function handleShortcut(key, fromFrame = false) {
   key = key.toLowerCase();
   if (key === "escape" && musicControls.open) { musicControls.close(true); showChrome(); return; }
   if (key === "escape" && glyphControls.open) { glyphControls.close(true); showChrome(); return; }
-  if (navigation.open || ![' ','r','m','f','escape','tab'].includes(key) && !/^[1-9]$/.test(key)) return;
+  if (aboutControls.open || navigation.open || ![' ','r','m','f','escape','tab'].includes(key) && !/^[1-9]$/.test(key)) return;
   if (key === 'tab') { if (!state.home) { showChrome(); if (fromFrame) $('goHome').focus({ preventScroll:true }); } return; }
   if (state.home) { if (/^[1-9]$/.test(key)) selectWorld(WORLD_ORDER[Number(key)-1]); return; }
   if (key === "f") hideChrome();
@@ -265,7 +272,7 @@ window.addEventListener("message", event => {
   if (message.type === "activity" && message.intent === "activate") { glyphControls.close(); musicControls.close(); void music.activate(); showChrome(); }
 });
 window.addEventListener("keydown", event => {
-  if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.target.closest?.(".analytics-consent, .analytics-settings") || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
+  if (!event.isTrusted || event.ctrlKey || event.altKey || event.metaKey || event.target.closest?.(".analytics-consent, .analytics-settings") || aboutControls.open || navigation.open || event.defaultPrevented || event.repeat || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
   if (event.target.tagName === "BUTTON" && [" ","Enter"].includes(event.key)) return;
   const key = event.key.toLowerCase();
   if ([" ","r"].includes(key)) event.preventDefault();
@@ -282,7 +289,7 @@ window.addEventListener('pointermove', event => {
 }, { passive:true });
 window.addEventListener('pointercancel', () => { revealPointer=null; }, { passive:true });
 window.addEventListener('click', event => {
-  if (!event.isTrusted || state.home || navigation.open) return;
+  if (!event.isTrusted || state.home || aboutControls.open || navigation.open) return;
   const moved = revealPointer?.moved; revealPointer=null;
   if (moved) return;
   // A direct scene URL has no selection gesture; its first scene tap starts audio.
@@ -293,7 +300,6 @@ window.addEventListener('click', event => {
   } else scheduleChrome();
 }, true);
 for (const event of ['focusin','focusout','pointerout']) window.addEventListener(event, scheduleChrome, { passive:true });
-document.querySelector('#aboutPanel details').addEventListener('toggle', scheduleChrome);
 let lastTick = performance.now();
 const timer = setInterval(() => {
   const now = performance.now(), delta = now - lastTick; lastTick = now;

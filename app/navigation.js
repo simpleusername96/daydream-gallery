@@ -78,7 +78,6 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
   }
   function open() {
     if (home.hidden === false || dialog.open) return;
-    document.querySelector('#aboutPanel details').open = false;
     list.replaceChildren(...order.filter(id => id !== selected).map(id => card(id, false)));
     dialog.showModal(); trigger.setAttribute('aria-expanded', 'true');
     // Remember the image, not pixel offsets, so rotation preserves the same place.

@@ -1,17 +1,18 @@
 import { WORLDS } from "./worlds.js";
+import { createAboutSurface } from "./about-surface.js";
 
 const COPY = {
   ko: {
     title: "Daydream Gallery",
     description: "만들고 싶은 장면을 만들어 모아두는 개인 갤러리입니다.",
     use: "마음에 드는 작품을 골라 감상해 보세요.",
-    credit: "모든 장면은 AI로 개발했습니다.",
+    credit: "모든 시각적 결과물은 AI를 활용해 제작했습니다.\n배경음악은 공개 라이선스로 제공된 곡을 사용했습니다.",
     source: "GitHub에서 공개 코드 보기",
     panelLabel: "Daydream Gallery 정보",
-    summaryTitle: "프로젝트 정보",
-    summaryLabel: "프로젝트 정보 보기",
+    triggerTitle: "프로젝트 정보",
+    triggerLabel: "프로젝트 정보 보기",
+    closeLabel: "닫기",
     languageLabel: "설명 언어",
-    imageAlt: "노을빛 하늘 아래 연꽃과 물고기가 움직이는 Stillwater 연못 풍경",
     metaDescription: "만들고 싶은 장면을 만들어 모아두는 개인 갤러리입니다. 마음에 드는 작품을 골라 감상해 보세요.",
     locale: "ko_KR"
   },
@@ -19,13 +20,13 @@ const COPY = {
     title: "Daydream Gallery",
     description: "A personal gallery of things I wanted to make.",
     use: "Choose a piece and spend some time with it.",
-    credit: "All scenes were developed with AI.",
+    credit: "All visuals were created with the help of AI.\nThe background music uses tracks released under open licenses.",
     source: "View the public code on GitHub",
     panelLabel: "About Daydream Gallery",
-    summaryTitle: "About this project",
-    summaryLabel: "View project information",
+    triggerTitle: "About this project",
+    triggerLabel: "View project information",
+    closeLabel: "Close",
     languageLabel: "Description language",
-    imageAlt: "Stillwater pond with lotus flowers and fish beneath a sunset sky",
     metaDescription: "A personal gallery of things I wanted to make. Choose a piece and spend some time with it.",
     locale: "en_US"
   }
@@ -38,11 +39,6 @@ function updateArtworkCredit(worldId = currentWorldId) {
   const artwork = WORLDS[worldId]?.artwork;
   section.hidden = !artwork;
   const ko = document.documentElement.lang === "ko";
-  const image = document.querySelector(".aboutCard img");
-  const source = artwork?.preview || "assets/previews/stillwater.png";
-  if (image.getAttribute("src") !== source) image.src = source;
-  image.alt = artwork ? artwork.title : COPY[ko ? "ko" : "en"].imageAlt;
-  image.style.objectFit = artwork ? "contain" : "cover";
   if (!artwork) return;
   document.getElementById("artworkTitle").textContent = artwork.title;
   document.getElementById("artworkInstitution").textContent = artwork.institution;
@@ -98,14 +94,17 @@ function applyLanguage(language, persist = false) {
   document.querySelector('[data-copy="source"]').textContent = copy.source;
 
   const panel = document.getElementById("aboutPanel");
-  const summary = panel.querySelector("summary");
-  const languageSwitch = panel.querySelector(".languageSwitch");
-  const image = panel.querySelector("img");
+  const trigger = document.getElementById("aboutToggle");
+  const dialog = document.getElementById("aboutDialog");
+  const languageSwitch = dialog.querySelector(".languageSwitch");
   panel.setAttribute("aria-label", copy.panelLabel);
-  summary.title = copy.summaryTitle;
-  summary.setAttribute("aria-label", copy.summaryLabel);
+  trigger.title = copy.triggerTitle;
+  trigger.setAttribute("aria-label", copy.triggerLabel);
+  dialog.setAttribute("aria-label", copy.panelLabel);
+  const closeButton = document.getElementById("closeAbout");
+  closeButton.setAttribute("aria-label", copy.closeLabel);
+  closeButton.title = copy.closeLabel;
   languageSwitch.setAttribute("aria-label", copy.languageLabel);
-  image.alt = copy.imageAlt;
   for (const button of languageSwitch.querySelectorAll("button[data-language]")) {
     button.setAttribute("aria-pressed", String(button.dataset.language === language));
   }
@@ -144,4 +143,45 @@ function initializeLanguage() {
 if (typeof document !== "undefined") {
   initializeLanguage();
   window.addEventListener("daydream-gallery-world-change", event => updateArtworkCredit(event.detail.world));
+}
+
+// The native modal owns focus containment and makes the live scene inert.
+export function createAboutModal({ onOpen, onClose, getScene }) {
+  const dialog = document.getElementById('aboutDialog');
+  const trigger = document.getElementById('aboutToggle');
+  const surface = createAboutSurface({ dialog, getScene });
+  let restoreFocus = true, pointer = null;
+  function close(restore = true) {
+    if (!dialog.open) return;
+    restoreFocus = restore;
+    surface.stop();
+    dialog.close();
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+  trigger.addEventListener('click', () => {
+    if (dialog.open) return;
+    onOpen();
+    restoreFocus = true;
+    dialog.showModal();
+    surface.start();
+    trigger.setAttribute('aria-expanded', 'true');
+  });
+  document.getElementById('closeAbout').addEventListener('click', () => close());
+  dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
+  dialog.addEventListener('close', () => {
+    surface.stop();
+    trigger.setAttribute('aria-expanded', 'false');
+    // Native dialog restoration is supplemented only while its trigger is visible.
+    if (restoreFocus && trigger.getClientRects().length && !document.body.classList.contains('chromeHidden')) trigger.focus({ preventScroll:true });
+    onClose();
+  });
+  dialog.addEventListener('pointerdown', event => { pointer = { x:event.clientX, y:event.clientY }; });
+  dialog.addEventListener('click', event => {
+    if (event.target.closest('button,a') || event.defaultPrevented) return;
+    if (pointer && Math.hypot(event.clientX-pointer.x,event.clientY-pointer.y)>8) return;
+    if (!window.getSelection()?.isCollapsed) return;
+    close();
+  });
+  window.addEventListener('pagehide', () => surface.destroy(), { once: true });
+  return { close, get open() { return dialog.open; } };
 }

@@ -3,32 +3,40 @@ export { PLAYLIST };
 
 // One streaming element belongs to the shell, independently of the scene renderer.
 export class WorldMusic {
-  constructor(onError = () => {}, createAudio = () => new Audio(), random = Math.random) {
+  constructor(onError = () => {}, createAudio = () => new Audio(), random = Math.random, catalog = PLAYLIST) {
     // Choose one session order; scene changes and repeat cycles never reshuffle it.
-    this.playlist = [...PLAYLIST];
+    this.playlist = [...catalog];
     for (let i = this.playlist.length - 1; i > 0; i--) {
       const j = Math.floor(random() * (i + 1));
       [this.playlist[i], this.playlist[j]] = [this.playlist[j], this.playlist[i]];
     }
     Object.assign(this, { onError, createAudio, audio: null, index: 0, world: null,
       muted: true, playing: false, hidden: false, disposed: false, revision: 0,
-      pending: null, failed: false, volume: this.playlist[0]?.volume ?? 0.2,
+      pending: null, part: 0, failed: false, volume: this.playlist[0]?.volume ?? 0.2,
       repeat: false, hasPlaybackIntent: false, listeners: new Set() });
   }
   get available() { return this.playlist.length > 0; }
   get running() { return this.available && !this.disposed && !this.muted && this.playing && !this.hidden; }
+  get currentTrack() { return this.playlist[this.index]; }
+  get currentSource() { return this.currentTrack.parts?.[this.part]?.url ?? this.currentTrack.url; }
+  get nativeLoop() { return !this.currentTrack.parts?.length && (this.repeat || this.currentTrack.loop === true); }
   ensureAudio() {
     if (this.audio || this.disposed || !this.available) return;
     this.audio = this.createAudio();
     this.audio.preload = "none";
     this.audio.volume = this.volume;
-    this.audio.loop = this.repeat || this.playlist[this.index].loop === true;
+    this.audio.loop = this.nativeLoop;
     this.audio.addEventListener("ended", this.onEnded);
     this.audio.addEventListener("error", this.onMediaError);
-    this.audio.src = this.playlist[this.index].url;
+    this.audio.src = this.currentSource;
   }
   onEnded = () => {
     if (this.disposed || !this.available) return;
+    if (this.part + 1 < (this.currentTrack.parts?.length ?? 1)) {
+      this.revision++; this.pending = null; this.part++; this.failed = false;
+      this.audio.pause(); this.audio.src = this.currentSource;
+      void this.sync(); this.notify(); return;
+    }
     this.selectTrack(this.repeat ? this.playlist[this.index].id : this.playlist[(this.index + 1) % this.playlist.length].id, true);
   };
   subscribe(listener) { this.listeners.add(listener); return () => this.listeners.delete(listener); }
@@ -38,12 +46,12 @@ export class WorldMusic {
     if (index < 0 || this.disposed || (index === this.index && !restart)) return;
     this.revision++;
     this.pending = null;
-    this.index = index;
+    this.index = index; this.part = 0;
     this.failed = false;
     if (this.audio) {
       this.audio.pause();
-      this.audio.loop = this.repeat || this.playlist[index].loop === true;
-      this.audio.src = this.playlist[index].url;
+      this.audio.loop = this.nativeLoop;
+      this.audio.src = this.currentSource;
     }
     void this.sync();
     this.notify();
@@ -61,7 +69,7 @@ export class WorldMusic {
   setRepeat(value) {
     if (this.disposed) return;
     this.repeat = Boolean(value);
-    if (this.audio) this.audio.loop = this.repeat || this.playlist[this.index].loop === true;
+    if (this.audio) this.audio.loop = this.nativeLoop;
     this.notify();
   }
   moveTrack(id, delta) {
@@ -134,10 +142,13 @@ export class WorldMusic {
   setHidden(value) { this.hidden = value; void this.sync(); }
   async select(id) { this.world = id; }
   snapshot() {
+    const parts = this.currentTrack?.parts;
+    const offset = parts?.slice(0, this.part).reduce((sum, part) => sum + part.duration, 0) ?? 0;
     return { world: this.world, track: this.playlist[this.index]?.id ?? null, title: this.playlist[this.index]?.title ?? null,
       available: this.available, volume: this.volume, repeat: this.repeat, enabled: !this.muted, running: this.running,
-      index: this.index, count: this.playlist.length, order: this.playlist.map(track => track.id), currentTime: this.audio?.currentTime ?? 0,
-      duration: Number.isFinite(this.audio?.duration) ? this.audio.duration : null,
+      index: this.index, count: this.playlist.length, order: this.playlist.map(track => track.id), currentTime: offset + (this.audio?.currentTime ?? 0),
+      part: this.part, parts: parts?.length ?? 1,
+      duration: parts ? parts.reduce((sum, part) => sum + part.duration, 0) : Number.isFinite(this.audio?.duration) ? this.audio.duration : null,
       paused: this.audio?.paused ?? true, muted: this.muted, hidden: this.hidden,
       failed: this.failed, disposed: this.disposed };
   }

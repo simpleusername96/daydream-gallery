@@ -18,10 +18,15 @@ CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
 
 ## Selected music recordings
 
-These five recordings are distributed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Runtime MP3s were converted by Daydream Gallery from the source files; credits refer to the original recordings.
+These three recordings are distributed under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Runtime MP3s were converted by Daydream Gallery from the source files; credits refer to the original recordings.
 
-- **Aria** — Johann Sebastian Bach, Goldberg Variations BWV 988; performed by **Kimiko Ishizaka**, **Open Goldberg Variations**. [Original recording and CC0 declaration](https://commons.wikimedia.org/wiki/File:Goldberg_Variations_BWV_988_01_Aria.flac).
 - **Vaporware** — **The Cynic Project** / [cynicmusic.com](https://cynicmusic.com/) / [pixelsphere.org](https://pixelsphere.org/). [Original recording and CC0 declaration](https://opengameart.org/content/calm-piano-1-vaporware).
-- **Sunset Plains** — **Yoiyami**. [Original recording and CC0 declaration](https://opengameart.org/content/sunset-plains).
 - **Synthwave 4k** — **The Cynic Project** / cynicmusic.com / pixelsphere.org. [Original recording and CC0 declaration](https://opengameart.org/content/calm-ambient-1-synthwave-4k).
 - **Lifewave 2k** — **The Cynic Project** / cynicmusic.com / pixelsphere.org. [Original recording and CC0 declaration](https://opengameart.org/content/calm-ambient-3-lifewave-2k).
+
+## Kevin MacLeod recordings
+
+- **Wisps of Whorls — Kevin MacLeod (incompetech.com)**. [Original recording](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200082). Licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Daydream Gallery converted the complete audio to stereo 44.1 kHz libmp3lame VBR quality 2, excluding embedded artwork.
+- **Deep Relaxation — Kevin MacLeod (incompetech.com)**. [Original recording](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1900045). Licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Daydream Gallery divided the complete audio into three chronological MP3 parts, each below the Pages asset limit. Each part uses stereo 44.1 kHz libmp3lame VBR quality 2, with 1.2-second sine fades at its start and end; embedded artwork is excluded.
+
+All parts together retain the full recording. Neither conversion equalizes or normalizes it. Artist, source, license and conversion credits are embedded in the distributed files.
