@@ -51,7 +51,8 @@
   const meteorProfile=deepFreeze(Object.assign({firstAt:8.2,yMin:.08,yMax:.20},mergeSelected('meteor')));
   const starProfile=deepFreeze(mergeSelected('stars'));
   const CONFIG=deepFreeze({
-    seed:19690917,maxFrameRate:60,maxCanvasPixels:1600*1100,minStageVisibleHeight:858,
+    seed:19690917,maxFrameRate:60,maxCanvasPixels:1600*1100,minStageVisibleHeight:858,foregroundScale:.5,portraitForegroundScale:.36,
+    stageVerticalOffset:.03,sideBankScale:.85,
     atmosphere:setting('atmosphere',1,0,2),dust:setting('dust',1,0,2),
     exhaust:setting('exhaust',1,0,1.8),
     twinkle:setting('twinkle',1,0,2),starSpeed:setting('starSpeed',1,0,2),
@@ -66,7 +67,7 @@
   let sceneIndex=0,sceneSerial=0,sceneSeed=CONFIG.seed;
   let ready=false,disposed=false,paused=false,failed=false,raf=0,clock=0;
   let lastTick=null,lastPaint=-Infinity,renderedFrames=0,renderMs=0;
-  let camera=view(W,H,W,H),stage=stageView(W,H,W,H,CONFIG.minStageVisibleHeight);
+  let camera=view(W,H,W,H),stage=stageView(W,H,W,H,CONFIG.minStageVisibleHeight,CONFIG.foregroundScale,CONFIG.stageVerticalOffset);
   let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -76,9 +77,11 @@
   let sourcePixels,sourceInterior,lastFire=-Infinity;
   const flowX=new Float32Array(GX*GY),flowY=new Float32Array(GX*GY);
   const xMap=new Uint16Array(FW),xWeight=new Float32Array(FW);
+  const sideBankWeight=new Float32Array(FW);
   const yMap=new Uint16Array(FH),yWeight=new Float32Array(FH);
   for(let x=0;x<FW;x++){
     const g=x/(FW-1)*(GX-1);xMap[x]=Math.min(GX-2,Math.floor(g));xWeight[x]=g-xMap[x];
+    sideBankWeight[x]=smooth(.35,.82,Math.abs(2*x/(FW-1)-1));
   }
   for(let y=0;y<FH;y++){
     const g=y/(FH-1)*(GY-1);yMap[y]=Math.min(GY-2,Math.floor(g));yWeight[y]=g-yMap[y];
@@ -92,12 +95,14 @@
     const dpr=Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(CONFIG.maxCanvasPixels/(w*h)));
     canvas.width=Math.max(1,Math.round(w*dpr));canvas.height=Math.max(1,Math.round(h*dpr));
     camera=view(canvas.width,canvas.height,W,H);
-    stage=stageView(canvas.width,canvas.height,W,H,CONFIG.minStageVisibleHeight);
+    stage=stageView(canvas.width,canvas.height,W,H,CONFIG.minStageVisibleHeight,
+      mix(CONFIG.foregroundScale,CONFIG.portraitForegroundScale,camera.reflow),CONFIG.stageVerticalOffset);
     if(ready)render(clock,true);
   }
 
   function renderExhaust(t){
     const strength=CONFIG.exhaust*(reducedMotion?.3:1);
+    const bankReduction=(1-CONFIG.sideBankScale)*(1-camera.reflow);
     // Pin the entire injection zone, then gradually open the field downstream.
     // Curl displacements keep neighboring contours related instead of independently jittering.
     for(let gy=0;gy<GY;gy++){
@@ -129,11 +134,15 @@
         const p=gRow+xMap[x],wx=xWeight[x];
         const dx=mix(mix(flowX[p],flowX[p+1],wx),mix(flowX[p+GX],flowX[p+GX+1],wx),wy);
         const dy=mix(mix(flowY[p],flowY[p+1],wx),mix(flowY[p+GX],flowY[p+GX+1],wx),wy);
-        const sx=clamp(Math.round(x+dx),0,FW-1),sy=clamp(Math.round(y+dy),0,FH-1);
-        let value=sourcePixels[sy*FW+sx];
+        // Lower only the outer desktop fire banks, with a smooth transition to the
+        // unchanged central plume. Portrait framing keeps its existing silhouette.
+        const baseY=(FH-1)-(FH-1-y)/(1-bankReduction*sideBankWeight[x]);
+        const sx=clamp(Math.round(x+dx),0,FW-1),sy=clamp(Math.round(baseY+dy),0,FH-1);
+        const unmoved=clamp(Math.round(baseY),0,FH-1)*FW+x;
+        let value=baseY<0?0:sourcePixels[sy*FW+sx];
         // Preserve opaque interiors when a displaced lookup crosses transparency; only the
         // actual silhouette edge is allowed to open and close. This prevents dark pinholes.
-        if(sourceInterior[row+x]&&(value>>>24)===0)value=sourcePixels[row+x];
+        if(baseY>=0&&sourceInterior[unmoved]&&(value>>>24)===0)value=sourcePixels[unmoved];
         firePixels[row+x]=value;
       }
     }
@@ -173,7 +182,7 @@
     ctx.globalAlpha=1;
     // Keep the first plume row registered to the nozzle. Lower rows spread
     // beyond both viewport sides, while the source's final row stays below it.
-    const rowHeight=(H-FIRE_TOP+overscan)/FH;
+    const rowHeight=(stage.top+stage.height-FIRE_TOP+overscan)/FH;
     for(let row=0;row<FH;row++){
       const spread=smooth(0,.18,row/FH);
       const width=W+(expandedWidth-W)*spread;

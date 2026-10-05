@@ -83,15 +83,16 @@
       // Only the background layout reflows on a narrow viewport. The rocket never stretches.
       reflow:smooth(1.30,.76,width/height)};
   }
-  function stageView(width,height,worldW=1536,worldH=1024,minVisibleHeight=920) {
+  function stageView(width,height,worldW=1536,worldH=1024,minVisibleHeight=920,contentScale=1,verticalOffset=0) {
     // Keep the complete lower exhaust visible. On wide displays, cap the vertical crop and
     // leave side space for low fire-bank extensions instead of pushing the rocket too high.
     const coverScale=Math.max(width/worldW,height/worldH);
     const coverVisibleHeight=height/coverScale;
     const visibleHeight=clamp(Math.max(coverVisibleHeight,minVisibleHeight),1,worldH);
-    const scale=height/visibleHeight;
-    const x=(width-worldW*scale)/2,y=height-worldH*scale;
-    return {scale,x,y,left:-x/scale,top:-y/scale,width:width/scale,height:visibleHeight,
+    const baseScale=height/visibleHeight,scale=baseScale*contentScale;
+    // Shrink the foreground uniformly around its centre, preserving the rocket's placement.
+    const x=(width-worldW*scale)/2,y=height-worldH*baseScale+worldH*(baseScale-scale)/2+height*verticalOffset;
+    return {scale,x,y,left:-x/scale,top:-y/scale,width:width/scale,height:height/scale,
       sideFill:Math.max(0,x),bottom:y+worldH*scale};
   }
   return Object.freeze({TAU,clamp,mix,smooth,mod,random,noiseField,
