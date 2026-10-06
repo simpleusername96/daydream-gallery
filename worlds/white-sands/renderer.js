@@ -17,7 +17,21 @@ function draw() {
   scene.render(time,seed); paint.putImageData(buffer,0,0);
   view=framing(canvas.width,canvas.height,plate.width,plate.height);
   context.imageSmoothingEnabled=false;
+  // Extend open sky with its current palette color; tree/fruit keep a uniform scale.
+  context.fillStyle='rgb('+Array.from(scene.pixels.slice(0,3)).join(',')+')';
+  context.fillRect(0,0,canvas.width,canvas.height);
   context.drawImage(plate,view.x,view.y,view.width,view.height);
+  const extra=Math.max(0,canvas.height-view.y-view.height);
+  if(extra>0){
+    // Add foreground depth only below the tree and its contact shadow. The eased
+    // row mapping has no seam at the start and uses the live, wind-driven dune art.
+    const start=Math.ceil(plate.height*.62),span=plate.height-start;
+    for(let y=start;y<plate.height;y+=2){
+      const next=Math.min(plate.height,y+2),a=(y-start)/span,b=(next-start)/span;
+      const top=view.y+y*view.scale+extra*a*a,bottom=view.y+next*view.scale+extra*b*b;
+      context.drawImage(plate,0,y,plate.width,next-y,view.x,top,view.width,bottom-top+.5);
+    }
+  }
   frames++; frameCost+=(performance.now()-began-frameCost)*.1;
 }
 

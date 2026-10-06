@@ -58,12 +58,14 @@
     void main(){
       vec2 q=vec2(vUV.x,1.0-vUV.y);
       float fit=min(1.0,uAspect/1.777);
+      // Crop around the iceberg; never squeeze the authored landscape into portrait.
+      float photoX=fit<1.0?.345+(q.x-.345)*fit:q.x;
       float horizon=mix(.718,.710,smoothstep(.70,1.45,uAspect));
       horizon+=.008*pow(abs(q.x-.5)*2.0,2.0)*(1.0-exp(-pow((q.x-.345)/.105,4.0)));
       float delta=q.y-horizon;
-      float k=max(0.0,((1.0-horizon)/(fit*.290)-1.0)/(1.0-horizon));
-      float photoY=.710+(delta<0.0?delta/fit:delta/(fit*(1.0+k*delta)));
-      vec3 plate=texture2D(uPlate,clamp(vec2(q.x,1.0-photoY),vec2(.001),vec2(.999))).rgb;
+      float k=max(0.0,((1.0-horizon)/.290-1.0)/(1.0-horizon));
+      float photoY=.710+(delta<0.0?delta:delta/(1.0+k*delta));
+      vec3 plate=texture2D(uPlate,clamp(vec2(photoX,1.0-photoY),vec2(.001),vec2(.999))).rgb;
       plate=mix(plate,vec3(.002,.007,.013),1.0-smoothstep(-.18,.02,photoY));
       vec3 color=plate;
       if(delta<=0.0){
@@ -71,8 +73,8 @@
         float sky=1.0-smoothstep(.648,.675,photoY);
         // The clean plate already contains tiny stars. Animate their light, not their size or position.
         float star=smoothstep(.022,.16,min(plate.r,plate.g));
-        float rate=.70+.25*sin(q.x*23.0+photoY*17.0);
-        float pulse=.55+pow(.5+.5*sin(uTime*rate+q.x*67.0+photoY*43.0),3.0);
+        float rate=.70+.25*sin(photoX*23.0+photoY*17.0);
+        float pulse=.55+pow(.5+.5*sin(uTime*rate+photoX*67.0+photoY*43.0),3.0);
         color+=vec3(.012,.018,.035)*sky*(1.0-star);
         color+=plate*star*(pulse-1.0)*sky;
       }
@@ -88,7 +90,7 @@
         float fresnel=.025+.975*pow(1.0-clamp(dot(n,view),0.0,1.0),5.0);
         float skyX=clamp(.5+reflected.x/max(.2,abs(reflected.z))*.43,.005,.995);
         float skyY=clamp(horizon-pow(max(.001,reflected.y),.60)*.85,.005,horizon);
-        vec2 skyUV=vec2(skyX,1.0-skyY);
+        vec2 skyUV=vec2(fit<1.0?.345+(skyX-.345)*fit:skyX,1.0-skyY);
         vec2 spread=vec2(2.8,1.2)/uSkySize;
         vec3 light=texture2D(uAurora,skyUV).rgb*.5;
         light+=texture2D(uAurora,skyUV+spread).rgb*.25;
@@ -100,12 +102,12 @@
         ocean+=vec3(.006,.017,.024)*crest*(.35+.65*depth);
         ocean+=light*(.15+.26*fresnel)*farFade;
         // A narrow changing reflection beneath the fixed lit iceberg.
-        float trail=exp(-pow((q.x-.345-w.y*.29)/(.009+depth*.045),2.0));
+        float trail=exp(-pow((photoX-.345-w.y*.29)/(.009+depth*.045),2.0));
         float glint=pow(clamp(.42+w.z*8.0-w.y*3.0,0.0,1.0),2.8);
         ocean+=vec3(.10,.29,.35)*trail*glint*(.35+.65*exp(-depth*2.0));
         float distant=smoothstep(.0,.008,delta);
         ocean=mix(vec3(.006,.017,.026),ocean,distant);
-        float keepIce=icebergMask(vec2(q.x,photoY));
+        float keepIce=icebergMask(vec2(photoX,photoY));
         color=mix(plate,ocean,smoothstep(.0,.0035,delta)*(1.0-keepIce));
       }
       float vignette=1.0-.13*pow(abs(q.x-.5)*2.0,2.0);
@@ -169,7 +171,7 @@
       gl_FragColor=vec4(color*illumination*uBrightness,fade*opacity);
     }`;
   const compositeVertex = seaVertex;
-  const compositeFragment = `precision highp float; uniform sampler2D uAurora; varying highp vec2 vUV; void main(){gl_FragColor=texture2D(uAurora,vUV);}`;
+  const compositeFragment = `precision highp float; uniform sampler2D uAurora; uniform float uAspect; varying highp vec2 vUV; void main(){float fit=min(1.0,uAspect/1.777);float x=fit<1.0?.345+(vUV.x-.345)*fit:vUV.x;gl_FragColor=texture2D(uAurora,vec2(x,vUV.y));}`;
   function showNotice(message, duration=3600) {
     notice.textContent=message;
     notice.classList.add('visible');
@@ -277,7 +279,7 @@
     gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,skyTexture);gl.uniform1i(seaProgram.aurora,1);gl.uniform2f(seaProgram.skySize,skyWidth,skyHeight);gl.drawArrays(gl.TRIANGLES,0,6);
     // The offscreen color is premultiplied by its accumulated alpha.
     gl.blendFuncSeparate(gl.ONE,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
-    bindQuad(compositeProgram);gl.uniform1i(compositeProgram.aurora,1);gl.drawArrays(gl.TRIANGLES,0,6);
+    bindQuad(compositeProgram);gl.uniform1f(compositeProgram.aspect,aspect);gl.uniform1i(compositeProgram.aurora,1);gl.drawArrays(gl.TRIANGLES,0,6);
     canvas.dataset.time=elapsed.toFixed(3);canvas.dataset.quality=quality.toFixed(3);canvas.dataset.engine='continuous-ocean-v19';canvas.dataset.frames=String((Number(canvas.dataset.frames)||0)+1);
   }
   function tick(now){

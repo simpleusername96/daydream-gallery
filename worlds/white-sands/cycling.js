@@ -19,7 +19,8 @@ function nearest(r,g,b, choices) {
 }
 
 export function framing(width, height, imageWidth, imageHeight) {
-  const scale = Math.max(width / imageWidth, height / imageHeight);
+  // Keep at least 42% of the landscape visible, preserving a small tree in portrait.
+  const scale = Math.max(width / imageWidth, Math.min(height / imageHeight, width / (imageWidth * .42)));
   const visible = width / scale;
   const left = clamp(imageWidth * .366 - visible / 2, 0, imageWidth - visible);
   return {x:-left*scale,y:(height-imageHeight*scale)/2,width:imageWidth*scale,height:imageHeight*scale,scale};
