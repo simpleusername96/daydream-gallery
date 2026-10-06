@@ -21,7 +21,7 @@ ASCII Bloom randomizes the shape and color on entry and after every click/tap. Y
 - [Arctic Aurora](https://daydream-gallery.pages.dev/#arctic-aurora): Aurora flows above a small iceberg and reflects across a dark sea in one continuous scene.
 - [ASCII Bloom](https://daydream-gallery.pages.dev/#ascii-bloom): Click or tap to send a wave through a field of characters. Shape and color are randomized on entry and after every stamp.
 - [Paper Wings](https://daydream-gallery.pages.dev/#paper-wings): Seventeen butterfly families fly independently over hanji paper.
-- [White Sands](https://daydream-gallery.pages.dev/#white-sands): A small tree and one red apple above white dunes. Wind stirs the leaves and lifts sand from the crests while the day slowly turns to sunset, a starlit night and dawn.
+- [White Sands](https://daydream-gallery.pages.dev/#white-sands): A small tree and one red apple above white dunes. Wind stirs the leaves and lifts sand from the crests while a three-minute cycle turns the day to sunset, a starlit night and dawn.
 - [Glass Valley](https://daydream-gallery.pages.dev/#glass-valley): Travel through a stained-glass mountain valley. Drag to look around.
 - [Quiet Ascent](https://daydream-gallery.pages.dev/#quiet-ascent): A small rocket rises through stars, drifting gas and occasional planets.
 - [Stillwater](https://daydream-gallery.pages.dev/#stillwater): Water, plants, fish, clouds and falling leaves move through a quiet pond.

@@ -52,8 +52,8 @@ const hours = {
     stars: .1, moonlight: .35, sheen: .85}),
 };
 
-/** One full day in active seconds; playback opens in clear daylight about a minute before the light turns. */
-export const DAY_SECONDS = 540;
+/** One full day in active seconds; playback opens in clear daylight about 22 seconds before the light turns. */
+export const DAY_SECONDS = 180;
 const OPENING = .28;
 const schedule = [[0,'day'],[.40,'day'],[.50,'golden'],[.57,'sunset'],[.64,'dusk'],[.71,'night'],[.85,'night'],[.925,'dawn'],[.975,'day'],[1,'day']];
 
