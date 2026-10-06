@@ -30,7 +30,7 @@ These three recordings are distributed under [CC0 1.0](https://creativecommons.o
 
 ## Kevin MacLeod recordings
 
-- **Wisps of Whorls — Kevin MacLeod (incompetech.com)**. [Original recording](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200082). Licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Daydream Gallery converted the complete audio to stereo 44.1 kHz libmp3lame VBR quality 2, excluding embedded artwork.
+- **Wisps of Whorls — Kevin MacLeod (incompetech.com)**. [Original recording](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1200082). Licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Daydream Gallery restored the complete audio with click removal and spectral noise reduction, compensated processing latency and applied constant peak-headroom attenuation, then encoded stereo 44.1 kHz libmp3lame VBR quality 2, excluding embedded artwork.
 - **Deep Relaxation — Kevin MacLeod (incompetech.com)**. [Original recording](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1900045). Licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Daydream Gallery divided the complete audio into three chronological MP3 parts, each below the Pages asset limit. Each part uses stereo 44.1 kHz libmp3lame VBR quality 2, with 1.2-second sine fades at its start and end; embedded artwork is excluded.
 
-All parts together retain the full recording. Neither conversion equalizes or normalizes it. Artist, source, license and conversion credits are embedded in the distributed files.
+All parts together retain the full recording. Deep Relaxation is not equalized or loudness-normalized. Wisps of Whorls has the noise-restoration changes described above. Artist, source, license and conversion credits are embedded in the distributed files.
