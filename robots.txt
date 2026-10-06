@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://daydream-gallery.pages.dev/sitemap.xml
+Sitemap: https://daydream.mmonoo.com/sitemap.xml
