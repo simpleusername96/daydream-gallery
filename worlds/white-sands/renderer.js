@@ -1,4 +1,4 @@
-import {createCyclingScene, framing, weather, LOGICAL_WIDTH, LOGICAL_HEIGHT, POSE_FPS} from './cycling.js';
+import {createCyclingScene, framing, weather, daylight, LOGICAL_WIDTH, LOGICAL_HEIGHT, POSE_FPS} from './cycling.js';
 
 const canvas=document.querySelector('canvas'), status=document.querySelector('[role=status]');
 const context=canvas.getContext('2d',{alpha:false});
@@ -48,7 +48,7 @@ function dispose(){
 }
 function onReduced(event){if(event.matches){playing=false;sync();}}
 const snapshot=()=>({id:'white-sands',ready,disposed,playing,time,frames,seed,error,frameCost,
-  renderer:'indexed-canvas',logical:[LOGICAL_WIDTH,LOGICAL_HEIGHT],view,weather:weather(time,seed),tracks:scene?.stats});
+  renderer:'indexed-canvas',logical:[LOGICAL_WIDTH,LOGICAL_HEIGHT],view,weather:weather(time,seed),day:daylight(time).cycle,tracks:scene?.stats});
 window.whiteSands=Object.freeze({get ready(){return ready;},snapshot,player:Object.freeze({
   setPlaying(value){if(disposed)return false;playing=Boolean(value);sync();return true;},
   setMuted(){return true;},randomScene:()=>changeScene(1+Math.floor(Math.random()*997)),

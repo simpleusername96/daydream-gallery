@@ -56,7 +56,7 @@ export const WORLDS = Object.freeze({
     "defaultCapabilities": {
       "play": true,
       "sound": false,
-      "scenes": true
+      "scenes": false
     }
   },
   "glass-valley": {

@@ -12,7 +12,7 @@ export class WorldMusic {
     }
     Object.assign(this, { onError, createAudio, audio: null, index: 0, world: null,
       muted: true, playing: false, hidden: false, disposed: false, revision: 0,
-      pending: null, part: 0, failed: false, volume: this.playlist[0]?.volume ?? 0.2,
+      pending: null, part: 0, failed: false, blocked: false, volume: this.playlist[0]?.volume ?? 0.2,
       repeat: false, hasPlaybackIntent: false, listeners: new Set() });
   }
   get available() { return this.playlist.length > 0; }
@@ -96,9 +96,10 @@ export class WorldMusic {
   fail(error) {
     if (this.failed || this.disposed) return;
     this.failed = true;
+    this.blocked = error?.name === "NotAllowedError";
     this.muted = true;
     void this.sync();
-    this.onError(error);
+    if (!this.blocked) this.onError(error);
   }
   async sync() {
     this.notify();
@@ -126,17 +127,19 @@ export class WorldMusic {
   async setMuted(value) {
     if (this.disposed) return;
     this.hasPlaybackIntent = true;
+    if (value && this.blocked) { this.blocked = false; this.failed = false; }
     this.muted = value || !this.available;
     if (!this.available) return;
     if (!value && this.failed) {
       this.failed = false;
-      this.audio?.load();
+      if (!this.blocked) this.audio?.load();
+      this.blocked = false;
     }
     await this.sync();
   }
-  // A first scene gesture starts music, but never overrides an explicit pause.
-  async activate() {
-    if (!this.hasPlaybackIntent && this.available && !this.disposed) await this.setMuted(false);
+  // Attempt once on entry; a real gesture can recover a browser-blocked start.
+  async activate({ userGesture = true } = {}) {
+    if ((!this.hasPlaybackIntent || (userGesture && this.blocked)) && this.available && !this.disposed) await this.setMuted(false);
   }
   setPlaying(value) { this.playing = value; void this.sync(); }
   setHidden(value) { this.hidden = value; void this.sync(); }
@@ -150,7 +153,7 @@ export class WorldMusic {
       part: this.part, parts: parts?.length ?? 1,
       duration: parts ? parts.reduce((sum, part) => sum + part.duration, 0) : Number.isFinite(this.audio?.duration) ? this.audio.duration : null,
       paused: this.audio?.paused ?? true, muted: this.muted, hidden: this.hidden,
-      failed: this.failed, disposed: this.disposed };
+      failed: this.failed, blocked: this.blocked, disposed: this.disposed };
   }
   dispose() {
     this.disposed = true;

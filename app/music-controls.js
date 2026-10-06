@@ -33,6 +33,16 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
   const resize = new ResizeObserver(frameQueue); resize.observe(queue);
   listen(queue, 'scroll', frameQueue);
   let opened = false, editing = false, order = '';
+  const silentMark = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  silentMark.setAttribute('d', 'M4 4l16 16'); silentMark.classList.add('musicSilentMark');
+  trigger.querySelector('svg').append(silentMark);
+  function labelTrigger(snapshot = music.snapshot()) {
+    const reason = snapshot.blocked ? '자동재생 차단 · 재생하려면 화면 클릭 또는 M'
+      : snapshot.failed ? '재생 실패 · 패널에서 다시 재생'
+      : snapshot.volume === 0 ? '음량 0'
+      : !snapshot.running ? '음악 일시정지' : '음악 재생 중';
+    label(trigger, `음악 ${opened ? '닫기' : '열기'} · ${reason}`);
+  }
   const title = track => track.title.split(' — ')[0].replace('Daydream Gallery · ', '');
   function render(snapshot = music.snapshot()) {
     const signature = snapshot.order.join('|');
@@ -69,7 +79,10 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
     get('musicVolume').setAttribute('aria-valuetext', `${Math.round(snapshot.volume * 100)}%`);
     get('musicVolume').style.setProperty('--volume', `${snapshot.volume * 100}%`);
     get('musicVolumeIcon').innerHTML = svg(snapshot.volume === 0 ? 'silent' : 'volume');
-    trigger.classList.toggle('musicActive', snapshot.running && snapshot.volume > 0);
+    const audible = snapshot.running && !snapshot.paused && snapshot.volume > 0;
+    trigger.classList.toggle('musicActive', audible);
+    trigger.classList.toggle('musicSilent', !audible);
+    labelTrigger(snapshot);
     trigger.disabled = !snapshot.available;
     panel.classList.toggle('musicSingle', snapshot.count < 2);
     for (const id of ['musicShuffle', 'musicPrevious', 'musicNext', 'musicRepeat', 'musicEdit']) get(id).hidden = snapshot.count < 2;
@@ -83,7 +96,7 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
   function close(restoreFocus = false) {
     if (!opened) return;
     opened = false; panel.inert = true; panel.hidden = true; trigger.setAttribute('aria-expanded', 'false');
-    label(trigger, '음악 열기');
+    labelTrigger();
     if (restoreFocus) trigger.focus({ preventScroll: true });
     onActivity();
   }
@@ -96,7 +109,7 @@ export function createMusicControls({ container, trigger, music, onStart, onActi
   listen(trigger, 'click', () => {
     if (opened) { close(true); return; }
     onOpen(); opened = true; panel.inert = false; panel.hidden = false; render();
-    trigger.setAttribute('aria-expanded', 'true'); label(trigger, '음악 닫기');
+    trigger.setAttribute('aria-expanded', 'true'); labelTrigger();
     get('musicPlay').focus({ preventScroll: true });
     queue.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });
     onActivity();
