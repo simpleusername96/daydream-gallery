@@ -40,6 +40,8 @@
 .musicPanel .musicMove { display:none; }
 .musicEditing .musicMove { display:grid; }
 #musicToggle { position:relative; }
+#musicToggle .musicSilentMark { display:none; }
+#musicToggle.musicSilent .musicSilentMark { display:block; }
 #musicToggle[aria-expanded="true"] { background:#ffffff18; }
 #musicToggle.musicActive::after { content:''; position:absolute; width:3px; height:3px; bottom:4px; border-radius:50%; background:currentColor; }
 @media (max-height:500px) { .musicPanel { padding:8px; bottom:calc(100% + 8px); } .musicHeading { min-height:32px; } .musicTransport { padding-top:0; } }

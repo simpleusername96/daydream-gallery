@@ -212,6 +212,8 @@ function applyRoute(restoreFocus = false) {
   if (index >= 0) {
     state.home = false; $('stage').hidden = false;
     navigation.showWorld(id); mountWorld(index); showChrome();
+    music.setHidden(document.hidden); music.setPlaying(state.playing);
+    void music.activate({ userGesture: false });
     if (restoreFocus) $('openScenes').focus({ preventScroll: true });
     return;
   }
@@ -304,7 +306,7 @@ window.addEventListener('click', event => {
   if (!event.isTrusted || state.home || aboutControls.open || navigation.open) return;
   const moved = revealPointer?.moved; revealPointer=null;
   if (moved) return;
-  // A direct scene URL has no selection gesture; its first scene tap starts audio.
+  // A scene tap retries browser-blocked autoplay without overriding manual pause.
   if (!event.target.closest?.('.chrome, #loadingNotice, .analytics-consent, .analytics-settings')) void music.activate();
   if (document.body.classList.contains('chromeHidden')) {
     showChrome();
