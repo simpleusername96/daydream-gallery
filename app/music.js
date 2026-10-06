@@ -1,6 +1,9 @@
 import { PLAYLIST } from "./music-playlist.js";
 export { PLAYLIST };
 
+// Fixed output attenuation applies at every slider setting, for every recording.
+const OUTPUT_GAIN = 10 ** (-12 / 20);
+
 // One streaming element belongs to the shell, independently of the scene renderer.
 export class WorldMusic {
   constructor(onError = () => {}, createAudio = () => new Audio(), random = Math.random, catalog = PLAYLIST) {
@@ -24,7 +27,7 @@ export class WorldMusic {
     if (this.audio || this.disposed || !this.available) return;
     this.audio = this.createAudio();
     this.audio.preload = "none";
-    this.audio.volume = this.volume;
+    this.audio.volume = this.volume * OUTPUT_GAIN;
     this.audio.loop = this.nativeLoop;
     this.audio.addEventListener("ended", this.onEnded);
     this.audio.addEventListener("error", this.onMediaError);
@@ -63,7 +66,7 @@ export class WorldMusic {
   setVolume(value) {
     if (!Number.isFinite(value) || this.disposed) return;
     this.volume = Math.max(0, Math.min(1, value));
-    if (this.audio) this.audio.volume = this.volume;
+    if (this.audio) this.audio.volume = this.volume * OUTPUT_GAIN;
     this.notify();
   }
   setRepeat(value) {
