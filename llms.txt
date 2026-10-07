@@ -8,6 +8,8 @@ All scenes were developed with AI. The runtime is browser code, not an AI genera
 
 Choose from 8 scenes at [Daydream Gallery](https://daydream.mmonoo.com/).
 
+Use the upper-right envelope to send an opinion without a name or email address. Close the dialog with Close or Esc. A failed submission preserves your draft.
+
 Choose an image on the home screen to open a scene. Use the home icon to return or the image-list icon to select another scene. The bottom controls offer a new scene, global play/pause, a music panel and a view without controls. The information icon opens a centered dialog without imagery. Its glass surface and text adapt to the scene, and the backdrop dims while open. Click plain content or the backdrop, use Close, or press Esc to dismiss; language buttons and links remain interactive. The New Scene button stays visible but disabled in Arctic Aurora and White Sands.
 
 Scene entry attempts music playback immediately. If autoplay is blocked, the music note shows a slash; click/tap the scene or press M to start. The slash also indicates pause or zero volume. Explicit music pause is preserved across scene changes. Open the music-note panel to control playback. Skip tracks, edit order, shuffle, repeat one song and adjust volume. All tracks play 12 dB quieter than before. Wisps of Whorls uses click removal and noise reduction. Playback shuffles six tracks once on entry; that order stays until explicitly edited. Scenes preserve track, volume and order. Music/global pause, home and hidden tabs suspend playback at its current position. The public export uses Journey, three retained CC0 recordings, Wisps of Whorls and Deep Relaxation. Deep Relaxation appears as one song and plays three chronological parts.

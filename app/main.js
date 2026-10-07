@@ -1,3 +1,4 @@
+import { createFeedback } from "./feedback.js";
 import { createAboutModal } from "./about.js";
 import { analytics } from "./analytics.js";
 import { ActiveTime } from "./analytics-time.js";
@@ -41,6 +42,10 @@ const aboutControls = createAboutModal({
   onClose: scheduleChrome,
   getScene: () => state.home ? null : bridge(state.previousFrame || state.frame)
 });
+const feedbackControls = createFeedback({ targets: [$("aboutPanel")], triggerClass: "iconButton",
+  onOpen: () => { aboutControls.close(false); glyphControls.close(); musicControls.close(); showChrome(); },
+  onClose: scheduleChrome
+});
 function setStatus(message, persistent = false, durationMs = 2400, instruction = false) {
   clearTimeout(state.statusTimer);
   status.textContent = message; status.classList.toggle("visible", Boolean(message));
@@ -51,7 +56,7 @@ function scheduleChrome() {
   clearTimeout(state.idleTimer);
   if (state.home || document.body.classList.contains('chromeHidden')) return;
   state.idleTimer = setTimeout(() => {
-    if (!aboutControls.open && !navigation.open && !glyphControls.open && !musicControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover')) hideChrome();
+    if (!feedbackControls.open && !aboutControls.open && !navigation.open && !glyphControls.open && !musicControls.open && state.ready && !state.busy && !document.querySelector('.chrome:focus-visible, .chrome :focus-visible, .chrome:hover')) hideChrome();
   }, 3000);
 }
 function showChrome() {
