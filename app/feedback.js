@@ -1,4 +1,4 @@
-import { feedbackEndpoint, feedbackSiteKey } from "./feedback-config.js";
+import { feedbackEndpoint, feedbackSiteKey } from "./feedback-config.js?v=split-20261007";
 export const feedbackCopy = {
   ko: { title:"의견 보내기", label:"의견", placeholder:"불편한 점이나 제안을 남겨 주세요.", send:"보내기", close:"닫기", sending:"보내는 중…", sent:"의견을 보냈습니다. 감사합니다.", error:"전송 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.", rate:"잠시 후 다시 보내 주세요.", verify:"봇 확인을 다시 진행해 주세요.", unavailable:"지금은 의견을 보낼 수 없어요. 잠시 후 다시 시도해 주세요." },
   en: { title:"Send feedback", label:"Feedback", placeholder:"Share a suggestion or something that did not work.", send:"Send", close:"Close", sending:"Sending…", sent:"Feedback sent. Thank you.", error:"We could not confirm delivery. Please try again shortly.", rate:"Please wait a moment before sending again.", verify:"Please complete the bot check again.", unavailable:"Feedback is unavailable right now. Please try again later." },
