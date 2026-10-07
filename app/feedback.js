@@ -73,7 +73,7 @@ export function createFeedback({ targets, triggerClass = "", onOpen = () => {}, 
     trigger.setAttribute("aria-haspopup", "dialog"); trigger.setAttribute("aria-controls", dialog.id);
     trigger.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>';
     trigger.addEventListener("click", () => { void open(trigger); });
-    target.append(trigger); triggers.push(trigger);
+    target.prepend(trigger); triggers.push(trigger);
   }
   refreshCopy();
   const observer = new MutationObserver(refreshCopy);
