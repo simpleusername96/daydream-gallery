@@ -6,6 +6,8 @@
 
 <!-- docs:gallery:start -->
 <table>
+  <tr><th colspan="2" scope="col">Tenebrae</th></tr>
+  <tr><td colspan="2"><a href="https://daydream.mmonoo.com/#tenebrae"><img src="assets/previews/tenebrae.webp" width="800" alt="Tenebrae"></a></td></tr>
   <tr><th width="50%" scope="col">Arctic Aurora</th><th width="50%" scope="col">ASCII Bloom</th></tr>
   <tr><td width="50%"><a href="https://daydream.mmonoo.com/#arctic-aurora"><img src="assets/previews/arctic-aurora.webp" width="800" alt="Arctic Aurora"></a></td><td width="50%"><a href="https://daydream.mmonoo.com/#ascii-bloom"><img src="assets/previews/ascii-bloom.webp" width="800" alt="ASCII Bloom"></a></td></tr>
   <tr><th width="50%" scope="col">Paper Wings</th><th width="50%" scope="col">White Sands</th></tr>
