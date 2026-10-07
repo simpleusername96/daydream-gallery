@@ -1,4 +1,4 @@
-import { createFeedback } from "./feedback.js";
+import { createFeedback } from "./feedback.js?v=split-20261007";
 import { createAboutModal } from "./about.js";
 import { analytics } from "./analytics.js";
 import { ActiveTime } from "./analytics-time.js";
