@@ -1,0 +1,11 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>tenebrae adapter</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}iframe{position:fixed;inset:0;border:0;width:100%;height:100%}#error{display:none;color:#eee;padding:40px;font:14px system-ui}.failed #error{display:block}.failed iframe{display:none}</style></head><body><iframe id="world" src="./index.html" title="tenebrae"></iframe><div id="error">장면을 준비하지 못했습니다. 다시 선택해 주세요.</div><script type="module">import {connectWorld} from "../../app/adapter.js";const frame=document.querySelector('#world'),prepared=new WeakSet();
+function prepare(doc){
+ if(!doc||prepared.has(doc))return;prepared.add(doc);
+ const notify=(type,detail={})=>parent.postMessage({source:'daydream-gallery-world',world:'tenebrae',type,...detail},location.origin);
+ doc.addEventListener('keydown',event=>{
+  if(!event.isTrusted||event.ctrlKey||event.altKey||event.metaKey||event.defaultPrevented||event.repeat)return;
+  const key=event.key.toLowerCase();if(![' ','r','m','f','escape'].includes(key)&&!(/^[1-9]$/.test(key)))return;
+  event.preventDefault();notify('shortcut',{key});
+ });
+}
+connectWorld({world:"tenebrae",frame,prepare,resolve(){const api=frame.contentWindow?.tenebrae;return api?{ready:api.ready,player:api.player}:null;}});</script></body></html>

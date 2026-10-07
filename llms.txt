@@ -6,7 +6,7 @@ All scenes were developed with AI. The runtime is browser code, not an AI genera
 
 ## Experience
 
-Choose from 8 scenes at [Daydream Gallery](https://daydream.mmonoo.com/).
+Choose from 9 scenes at [Daydream Gallery](https://daydream.mmonoo.com/).
 
 Use the upper-right envelope, immediately left of the information icon, to send an opinion without a name or email address. Close the dialog with Close or Esc. A failed submission preserves your draft.
 
@@ -20,6 +20,7 @@ ASCII Bloom randomizes the shape and color on entry and after every click/tap. Y
 
 ## Available scenes
 
+- [Tenebrae](https://daydream.mmonoo.com/#tenebrae): Wreaths of oversized flowers, painted like oil, turn slowly in the dark. Blooms open as they enter the light and close as they leave it, while a great central flower stays fully grown, slowly drifts and rotates about its own axis. Attached petals and leaves flex gently; drifting petals flow around flowers and stems. Each visit and each new scene takes one of five colour schemes at random: old-master warmth, neon magenta, orange and blue, acid or ice.
 - [Arctic Aurora](https://daydream.mmonoo.com/#arctic-aurora): Aurora flows above a small iceberg and reflects across a dark sea in one continuous scene.
 - [ASCII Bloom](https://daydream.mmonoo.com/#ascii-bloom): Click or tap to send a wave through a field of characters. Shape and color are randomized on entry and after every stamp.
 - [Paper Wings](https://daydream.mmonoo.com/#paper-wings): Seventeen butterfly families fly independently over hanji paper.

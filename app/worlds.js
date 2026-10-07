@@ -1,7 +1,20 @@
 // Reviewed public collection; newest publication first.
-export const WORLD_ORDER = ["arctic-aurora","ascii-bloom","paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
+export const WORLD_ORDER = ["tenebrae","arctic-aurora","ascii-bloom","paper-wings","white-sands","glass-valley","quiet-ascent","stillwater","journey"];
 
 export const WORLDS = Object.freeze({
+  "tenebrae": {
+    "id": "tenebrae",
+    "thumbnail": "assets/previews/tenebrae.webp",
+    "label": "Tenebrae",
+    "adapter": "worlds/tenebrae/adapter.html",
+    "autoDurationMs": 0,
+    "sceneDurationMs": 0,
+    "defaultCapabilities": {
+      "play": true,
+      "sound": false,
+      "scenes": true
+    }
+  },
   "arctic-aurora": {
     "id": "arctic-aurora",
     "thumbnail": "assets/previews/arctic-aurora.webp",

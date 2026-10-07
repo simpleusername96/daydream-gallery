@@ -4,13 +4,17 @@ These notices apply to the listed components. They do not license Daydream Galle
 
 ## Third-party components
 
-- **three.js 0.180.0** — MIT License. Used by Stillwater and Paper Wings. See [LICENSES/THREE.txt](LICENSES/THREE.txt).
+- **three.js 0.180.0** — MIT License. Used by Stillwater, Paper Wings and Tenebrae. See [LICENSES/THREE.txt](LICENSES/THREE.txt).
 - **Quaternius — Ultimate Nature Pack** — CC0 1.0. Selected visual assets are embedded in Journey.
 - **Kenney — Nature Kit** — CC0 1.0. Selected visual assets are embedded in Journey.
 
 ## Arctic Aurora artwork
 
 Arctic Aurora uses two images generated for Daydream Gallery with OpenAI image generation: the approved aurora reference and a derived clean background plate. Its JavaScript and GLSL were authored for this project. No external shader implementation or reference photograph is distributed. This statement does not assign a separate open-source or public-domain license to the scene or artwork.
+
+## Tenebrae procedural artwork
+
+Tenebrae uses project-authored procedural flower, foliage and petal geometry and an oil-paint shader treatment. No third-party model, image or audio file is included in its renderer. Algorithmic references are recorded in the private scene documentation; no external shader implementation is distributed. This notice does not grant a separate open-source or public-domain license to the scene.
 
 ## Original audio
 
