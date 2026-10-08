@@ -1,9 +1,9 @@
 import { feedbackEndpoint, feedbackSiteKey } from "./feedback-config.js?v=split-20261007";
 export const feedbackCopy = {
-  ko: { title:"의견 보내기", label:"의견", placeholder:"불편한 점이나 제안을 남겨 주세요.", send:"보내기", close:"닫기", sending:"보내는 중…", sent:"의견을 보냈습니다. 감사합니다.", error:"전송 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.", rate:"잠시 후 다시 보내 주세요.", verify:"봇 확인을 다시 진행해 주세요.", unavailable:"지금은 의견을 보낼 수 없어요. 잠시 후 다시 시도해 주세요." },
-  en: { title:"Send feedback", label:"Feedback", placeholder:"Share a suggestion or something that did not work.", send:"Send", close:"Close", sending:"Sending…", sent:"Feedback sent. Thank you.", error:"We could not confirm delivery. Please try again shortly.", rate:"Please wait a moment before sending again.", verify:"Please complete the bot check again.", unavailable:"Feedback is unavailable right now. Please try again later." },
-  ja: { title:"意見を送る", label:"ご意見", placeholder:"改善の提案や不便に感じた点をお聞かせください。", send:"送信", close:"閉じる", sending:"送信中…", sent:"ご意見を送信しました。ありがとうございます。", error:"送信結果を確認できませんでした。しばらくしてからお試しください。", rate:"しばらくしてから再度送信してください。", verify:"ボット確認をもう一度行ってください。", unavailable:"現在、ご意見を送信できません。しばらくしてからお試しください。" },
-  "zh-cn": { title:"发送意见", label:"意见", placeholder:"请留下建议或遇到的问题。", send:"发送", close:"关闭", sending:"发送中…", sent:"意见已发送，谢谢。", error:"无法确认发送结果，请稍后重试。", rate:"请稍后再次发送。", verify:"请重新完成机器人验证。", unavailable:"暂时无法发送意见，请稍后重试。" }
+  ko: { title:"의견 보내기", label:"의견", placeholder:"불편한 점이나 제안을 남겨 주세요.", send:"보내기", close:"닫기", sending:"보내는 중…", sent:"의견을 보냈습니다. 감사합니다.", error:"전송 결과를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.", rate:"{seconds}초 후 다시 보내 주세요.", verify:"봇 확인을 다시 진행해 주세요.", unavailable:"지금은 의견을 보낼 수 없어요. 잠시 후 다시 시도해 주세요." },
+  en: { title:"Send feedback", label:"Feedback", placeholder:"Share a suggestion or something that did not work.", send:"Send", close:"Close", sending:"Sending…", sent:"Feedback sent. Thank you.", error:"We could not confirm delivery. Please try again shortly.", rate:"Please wait {seconds} seconds before sending again.", verify:"Please complete the bot check again.", unavailable:"Feedback is unavailable right now. Please try again later." },
+  ja: { title:"意見を送る", label:"ご意見", placeholder:"改善の提案や不便に感じた点をお聞かせください。", send:"送信", close:"閉じる", sending:"送信中…", sent:"ご意見を送信しました。ありがとうございます。", error:"送信結果を確認できませんでした。しばらくしてからお試しください。", rate:"{seconds}秒後にもう一度送信してください。", verify:"ボット確認をもう一度行ってください。", unavailable:"現在、ご意見を送信できません。しばらくしてからお試しください。" },
+  "zh-cn": { title:"发送意见", label:"意见", placeholder:"请留下建议或遇到的问题。", send:"发送", close:"关闭", sending:"发送中…", sent:"意见已发送，谢谢。", error:"无法确认发送结果，请稍后重试。", rate:"请等待{seconds}秒后再次发送。", verify:"请重新完成机器人验证。", unavailable:"暂时无法发送意见，请稍后重试。" }
 };
 let scriptPromise;
 function loadTurnstile() {
@@ -37,7 +37,19 @@ export function createFeedback({ targets, triggerClass = "", onOpen = () => {}, 
     return feedbackCopy[key] ? key : key.startsWith("ko") ? "ko" : "en";
   };
   let copy = feedbackCopy[language()], token = "", widget = null, busy = false, focusTarget = null, epoch = 0;
-  const update = () => { send.disabled = busy || !token || !message.value.trim(); send.textContent = busy ? copy.sending : copy.send; };
+  let retryUntil = 0, retryTimer;
+  const retrySecondsLeft = () => Math.max(0, Math.ceil((retryUntil - Date.now()) / 1000));
+  const update = () => {
+    message.readOnly = busy;
+    send.disabled = busy || retrySecondsLeft() > 0 || !token || !message.value.trim();
+    send.textContent = busy ? copy.sending : copy.send;
+  };
+  const waitToRetry = seconds => {
+    retryUntil = Date.now() + seconds * 1000;
+    status.textContent = copy.rate.replace("{seconds}", String(seconds));
+    clearTimeout(retryTimer);
+    retryTimer = setTimeout(() => { retryUntil = 0; status.textContent = ""; update(); }, seconds * 1000);
+  };
   const removeWidget = () => { epoch++; if (widget !== null) window.turnstile?.remove(widget); widget = null; token = ""; update(); };
   const refreshCopy = () => {
     copy = feedbackCopy[language()];
@@ -45,12 +57,13 @@ export function createFeedback({ targets, triggerClass = "", onOpen = () => {}, 
     dialog.querySelector("label").textContent = copy.label;
     message.placeholder = copy.placeholder; closeButton.textContent = copy.close;
     for (const trigger of triggers) { trigger.title = copy.title; trigger.setAttribute("aria-label", copy.title); }
+    if (retrySecondsLeft()) status.textContent = copy.rate.replace("{seconds}", String(retrySecondsLeft()));
     update();
   };
   async function open(trigger) {
     if (dialog.open) return;
     onOpen(); refreshCopy(); focusTarget = trigger;
-    status.textContent = busy ? copy.sending : "";
+    status.textContent = busy ? copy.sending : retrySecondsLeft() ? copy.rate.replace("{seconds}", String(retrySecondsLeft())) : "";
     dialog.showModal(); message.focus({ preventScroll: true });
     if (!feedbackSiteKey) { status.textContent = copy.unavailable; return; }
     const current = ++epoch;
@@ -96,7 +109,7 @@ export function createFeedback({ targets, triggerClass = "", onOpen = () => {}, 
   });
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    if (busy || !token || !message.value.trim() || !form.reportValidity()) return;
+    if (busy || retrySecondsLeft() || !token || !message.value.trim() || !form.reportValidity()) return;
     busy = true; status.textContent = copy.sending; update();
     try {
       const response = await fetch(feedbackEndpoint, {
@@ -105,7 +118,10 @@ export function createFeedback({ targets, triggerClass = "", onOpen = () => {}, 
       });
       if (!response.ok) {
         let reason; try { reason = (await response.json()).error; } catch {}
-        status.textContent = reason === "rate" ? copy.rate : reason === "verification" ? copy.verify : copy.error;
+        if (reason === "rate") {
+          const seconds = Number(response.headers.get("Retry-After"));
+          waitToRetry(Number.isFinite(seconds) && seconds > 0 ? Math.ceil(seconds) : 60);
+        } else status.textContent = reason === "verification" ? copy.verify : reason === "unavailable" ? copy.unavailable : copy.error;
       } else {
         message.value = ""; status.textContent = copy.sent;
       }
@@ -115,6 +131,6 @@ export function createFeedback({ targets, triggerClass = "", onOpen = () => {}, 
       if (widget !== null && dialog.open) window.turnstile?.reset(widget);
     }
   });
-  window.addEventListener("pagehide", () => { observer.disconnect(); removeWidget(); }, { once: true });
+  window.addEventListener("pagehide", () => { observer.disconnect(); clearTimeout(retryTimer); removeWidget(); }, { once: true });
   return { close: () => { if (dialog.open) dialog.close(); }, get open() { return dialog.open; } };
 }
