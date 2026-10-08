@@ -1,15 +1,32 @@
-// GA4 starts on production visits. Preview hosts never send production analytics.
-export function startAnalytics({id, host, page}) {
+// Collect only ordinary production visits; owner opt-outs and automation skip both providers.
+export function startAnalytics({id, host, page, cloudflareToken}) {
   const key = 'analytics-consent-v1';
   const production = location.hostname === host && location.protocol === 'https:';
-  let choice = null, loaded = false, previousPage = '', lastTitle = '';
+  const exclusionKey = 'analytics-excluded-v1';
+  const url = new URL(location.href);
+  const mode = url.searchParams.get('analytics');
+  let browserExcluded = false;
+  for (const storageName of ['localStorage', 'sessionStorage']) {
+    try { if (window[storageName].getItem(exclusionKey) === '1') browserExcluded = true; } catch {}
+  }
+  if (mode === 'off' || mode === 'on') {
+    browserExcluded = mode === 'off';
+    const save = storage => browserExcluded ? storage.setItem(exclusionKey, '1') : storage.removeItem(exclusionKey);
+    for (const storageName of ['localStorage', 'sessionStorage']) {
+      try { save(window[storageName]); } catch {}
+    }
+    url.searchParams.delete('analytics');
+    history.replaceState(history.state, '', url.href);
+  }
+  const excluded = browserExcluded || navigator.webdriver === true;
+  let choice = null, loaded = false, cloudflareLoaded = false, previousPage = '', lastTitle = '';
   const listeners = new Set();
   const readChoice = () => {
     try { let value; try { value=localStorage.getItem(key); } catch { value=sessionStorage.getItem(key); } const saved = JSON.parse(value); return saved && saved.expires > Date.now() && ['granted','denied'].includes(saved.value) ? saved.value : null; }
     catch { return null; }
   };
   choice = readChoice();
-  const allowed = () => production && choice !== 'denied';
+  const allowed = () => production && !excluded && choice !== 'denied';
   function gtag() { window.dataLayer.push(arguments); }
   function safeUrl(value, campaign = false) {
     try {
@@ -48,6 +65,14 @@ export function startAnalytics({id, host, page}) {
       script.async=true; script.src='https://www.googletagmanager.com/gtag/js?id='+id;
       document.head.append(script); loaded=true;
     } else gtag('consent','update',{analytics_storage:'granted'});
+    if (cloudflareToken && !cloudflareLoaded) {
+      const script = document.createElement('script');
+      script.defer = true;
+      script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      script.dataset.cfBeacon = JSON.stringify({token: cloudflareToken});
+      document.head.append(script);
+      cloudflareLoaded = true;
+    }
     view();
   }
   function apply(value) {
@@ -65,8 +90,15 @@ export function startAnalytics({id, host, page}) {
     for (const callback of listeners) callback(allowed());
   }
   // Preserve existing visitor opt-outs; new visits require no site prompt.
-  window.addEventListener('storage',event=>{if(event.key===key || event.key===null)apply(readChoice());});
-  const api={allowed,view,onChange(callback){listeners.add(callback);return()=>listeners.delete(callback);},event(name,params={}){if(allowed())gtag('event',name,{...currentPage(),...params});}};
+  window.addEventListener('storage',event=>{
+    if (event.key === exclusionKey || event.key === null) { location.reload(); return; }
+    if (event.key === key) {
+      const next = readChoice();
+      if (next === 'denied' && cloudflareLoaded) location.reload();
+      else apply(next);
+    }
+  });
+  const api={allowed,excluded:()=>excluded,view,onChange(callback){listeners.add(callback);return()=>listeners.delete(callback);},event(name,params={}){if(allowed())gtag('event',name,{...currentPage(),...params});}};
   document.addEventListener('click',event=>{
     const anchor=event.target.closest?.('a[href]'); if(!anchor)return;
     const url=new URL(anchor.href);
