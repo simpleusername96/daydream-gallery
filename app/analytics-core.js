@@ -41,8 +41,8 @@ export function startAnalytics({id, host, page, cloudflareToken}) {
     } catch { return ''; }
   }
   const entryReferrer = safeUrl(document.referrer);
-  function currentPage() {
-    const selected = page();
+  function currentPage(contentId) {
+    const selected = page(contentId);
     const pageUrl = new URL(location.href);
     if (selected.path) pageUrl.pathname = selected.path;
     return {page_location:safeUrl(pageUrl.href,true) + (selected.hash || ''), page_title:selected.title, content_id:selected.id || 'home', site_language:document.documentElement.lang};
@@ -100,7 +100,7 @@ export function startAnalytics({id, host, page, cloudflareToken}) {
       else apply(next);
     }
   });
-  const api={allowed,excluded:()=>excluded,view,onChange(callback){listeners.add(callback);return()=>listeners.delete(callback);},event(name,params={}){if(allowed())gtag('event',name,{...currentPage(),...params});}};
+  const api={allowed,excluded:()=>excluded,view,onChange(callback){listeners.add(callback);return()=>listeners.delete(callback);},event(name,params={}){if(allowed())gtag('event',name,{...currentPage(params.content_id),...params});}};
   document.addEventListener('click',event=>{
     const anchor=event.target.closest?.('a[href]'); if(!anchor)return;
     const url=new URL(anchor.href);
