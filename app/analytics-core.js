@@ -43,7 +43,9 @@ export function startAnalytics({id, host, page, cloudflareToken}) {
   const entryReferrer = safeUrl(document.referrer);
   function currentPage() {
     const selected = page();
-    return {page_location:safeUrl(location.href,true) + (selected.hash || ''), page_title:selected.title, content_id:selected.id || 'home', site_language:document.documentElement.lang};
+    const pageUrl = new URL(location.href);
+    if (selected.path) pageUrl.pathname = selected.path;
+    return {page_location:safeUrl(pageUrl.href,true) + (selected.hash || ''), page_title:selected.title, content_id:selected.id || 'home', site_language:document.documentElement.lang};
   }
   function view() {
     if (!allowed()) return;

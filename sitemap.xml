@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://daydream.mmonoo.com/</loc>
-  </url>
+  <url><loc>https://daydream.mmonoo.com/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/tenebrae/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/arctic-aurora/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/ascii-bloom/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/paper-wings/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/white-sands/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/glass-valley/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/quiet-ascent/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/stillwater/</loc></url>
+  <url><loc>https://daydream.mmonoo.com/scenes/journey/</loc></url>
 </urlset>
