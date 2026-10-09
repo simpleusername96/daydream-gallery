@@ -1,4 +1,5 @@
 // Image navigation owns presentation and focus; main.js owns routing and renderers.
+import { scenePath } from './routes.js';
 export function createNavigation({ order, worlds, onSelect, onHome }) {
   const home = document.getElementById('homeGallery');
   const grid = document.getElementById('worldGrid');
@@ -23,7 +24,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
   function card(id, lazy = true) {
     const world = worlds[id];
     const link = document.createElement('a');
-    link.href = '#' + id; link.className = 'worldCard';
+    link.href = scenePath(id); link.className = 'worldCard';
     link.dataset.world = id; link.setAttribute('aria-label', world.label);
     const image = document.createElement('img');
     image.src = world.thumbnail; image.alt = ''; image.width = 800; image.height = 450;
@@ -32,6 +33,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
     link.addEventListener('click', event => follow(event, () => { dismiss(false); onSelect(id); }));
     return link;
   }
+  grid.replaceChildren(); // Replace the exported crawlable cards with live navigation.
   order.forEach((id, index) => { const link = card(id, index > 2); cards.set(id, link); grid.append(link); });
   grid.classList.toggle('smallCollection', order.length < 3);
   grid.style.setProperty('--home-rows', Math.max(1, Math.ceil(order.length / 3)));
@@ -140,7 +142,7 @@ export function createNavigation({ order, worlds, onSelect, onHome }) {
   resize.observe(list);
   resize.observe(grid);
   const homeLink = document.getElementById('goHome');
-  homeLink.href = location.pathname + location.search;
+  homeLink.href = '/' + location.search;
   homeLink.addEventListener('click', event => follow(event, onHome));
   return {
     get open() { return dialog.open; },

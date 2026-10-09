@@ -1,12 +1,14 @@
 import { createFeedback } from "./feedback.js?v=feedback-20261008";
 import { createAboutModal } from "./about.js";
-import { analytics } from "./analytics.js";
+import { analytics } from "./analytics.js?v=scenes-20261009";
 import { ActiveTime } from "./analytics-time.js";
 const analyticsTime = new ActiveTime(analytics);
 import { WORLD_ORDER, WORLDS } from "./worlds.js";
 import { PlaybackClock } from "./playback.js";
 import { WorldMusic } from "./music.js";
-import { createNavigation } from "./navigation.js";
+import { createNavigation } from "./navigation.js?v=scenes-20261009";
+import { scenePath, sceneFromLocation, updatePageMetadata } from "./routes.js";
+import { PAGE_METADATA } from "./scene-metadata.js";
 import { createGlyphControls } from "./glyph-controls.js";
 import { createMusicControls } from "./music-controls.js";
 
@@ -206,13 +208,16 @@ function selectWorld(id) {
 }
 
 function navigate(id) {
-  const hash = id === 'home' ? '' : '#' + id;
-  if (location.hash !== hash) history.pushState(null, '', location.pathname + location.search + hash);
+  const pathname = scenePath(id);
+  if (location.pathname !== pathname || location.hash) history.pushState(null, '', pathname + location.search);
   applyRoute(true);
 }
 function applyRoute(restoreFocus = false) {
   aboutControls.close(false);
-  const id = location.hash.slice(1);
+  const id = sceneFromLocation(location, WORLD_ORDER);
+  // Migrate old hash links in place without adding a browser-history entry.
+  if (location.pathname !== scenePath(id) || location.hash) history.replaceState(null, '', scenePath(id) + location.search);
+  updatePageMetadata(PAGE_METADATA[id], document);
   const index = WORLD_ORDER.indexOf(id);
   if (index >= 0) {
     state.home = false; $('stage').hidden = false;
@@ -222,8 +227,6 @@ function applyRoute(restoreFocus = false) {
     if (restoreFocus) $('openScenes').focus({ preventScroll: true });
     return;
   }
-  // Old #home links and unknown scenes resolve to the canonical home URL.
-  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   const previousId = activeWorld().id;
   analyticsTime.select(null);
   analytics.view();
@@ -241,6 +244,7 @@ function applyRoute(restoreFocus = false) {
   if (restoreFocus) navigation.focusHome(previousId);
 }
 window.addEventListener('hashchange', () => applyRoute(true));
+window.addEventListener('popstate', () => applyRoute(true));
 function togglePlaying() {
   analyticsTime.flush();
   analytics.event(state.playing ? "scene_pause" : "scene_resume", {content_id:activeWorld().id});
