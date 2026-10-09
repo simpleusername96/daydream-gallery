@@ -1,6 +1,6 @@
 import { createFeedback } from "./feedback.js?v=feedback-20261008";
 import { createAboutModal } from "./about.js";
-import { analytics } from "./analytics.js?v=scenes-20261009";
+import { analytics } from "./analytics.js?v=analytics-20261009";
 import { ActiveTime } from "./analytics-time.js";
 const analyticsTime = new ActiveTime(analytics);
 import { WORLD_ORDER, WORLDS } from "./worlds.js";
