@@ -3,6 +3,9 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), geolocation=(), microphone=()
 
+/worlds/*
+  X-Robots-Tag: noindex
+
 /assets/runtime/*
   Cache-Control: public, max-age=31536000, immutable
 
